@@ -2,6 +2,7 @@ import random
 
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.urls import reverse
 from django.views.generic import FormView, View
 
 from .models import Answer, QuizzSending
@@ -15,22 +16,30 @@ class Home(View):
 
 class AnswerAQuestion(FormView):
     template_name = 'quizz/answer_a_question.html'
-    success_url = 'form'
     form_class = AnswerForm
 
     def get(self, request, *args, **kwargs):
         self.date = kwargs['date']
+        self.date_for_url = self.date.strftime('%Y-%m-%d--%H-%M')
         self.email = kwargs['email']
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         self.date = kwargs['date']
+        self.date_for_url = self.date.strftime('%Y-%m-%d--%H-%M')
         self.email = kwargs['email']
         return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
         form.add_answer_in_database()
         return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse(
+            'form',
+            kwargs={
+                'email': self.email,
+                'date': self.date_for_url})
 
     def get_context_data(self, **kwargs):
         # TODO better usage of ORM
@@ -60,7 +69,7 @@ class AnswerAQuestion(FormView):
         kwargs['answers_from_email'] = answers_from_email
         kwargs['unanswered_questions'] = unanswered_questions
 
-        kwargs['date_for_url'] = self.date.strftime('%Y-%m-%d--%H-%M')
+        kwargs['date_for_url'] = self.date_for_url
         kwargs['date'] = self.date
         kwargs['email'] = self.email
         return kwargs
