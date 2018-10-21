@@ -21,7 +21,6 @@ class DateTimeConverter:
 
     def to_python(self, value):
         m = re.search(self.regex, value)
-        print(m.groups())
         year, month, day, hour, minute = (int(v) for v in m.groups())
         return datetime(
             year,
