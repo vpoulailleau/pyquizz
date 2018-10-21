@@ -41,6 +41,10 @@ class Group(models.Model):
         help_text='slug du groupe (basé sur le nom)',
         max_length=50,
     )
+    persons = models.ManyToManyField(
+        Person,
+        related_name='groups',
+    )
 
     class Meta:
         ordering = ['name']
@@ -51,7 +55,7 @@ class Group(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('quizz_person_detail', args=[str(self.slug)])
+        return reverse('quizz_group_detail', args=[str(self.slug)])
 
 
 # For large amounts of text, use TextField, default widget is then textarea.
