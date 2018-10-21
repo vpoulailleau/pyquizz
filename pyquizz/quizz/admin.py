@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html, format_html_join
 
-from .models import Group, Person, Question, Quizz
+from .models import Group, Person, Question, Quizz, QuizzSending
 
 
 def format_list(generator):
@@ -49,3 +49,8 @@ class QuizzAdmin(admin.ModelAdmin):
     list_display = ('name', 'random_question_order', 'questions_display')
     prepopulated_fields = {'slug': ('name',)}
     filter_horizontal = ('questions',)
+
+
+@admin.register(QuizzSending)
+class QuizzSendingAdmin(admin.ModelAdmin):
+    list_display = ('date', 'quizz', 'group')

@@ -142,3 +142,42 @@ class Quizz(models.Model):
 
     def get_absolute_url(self):
         return reverse('quizz_quizz_detail', args=[str(self.slug)])
+
+
+class QuizzSending(models.Model):
+    quizz = models.ForeignKey(
+        Quizz,
+        on_delete=models.CASCADE,
+        related_name='quizz_sendings',
+        blank=False,
+        null=False,
+        verbose_name='quizz',
+        help_text='quizz à envoyer',
+    )
+    group = models.ForeignKey(
+        Group,
+        on_delete=models.CASCADE,
+        related_name='quizz_sendings',
+        blank=False,
+        null=False,
+        verbose_name='groupe',
+        help_text='groupe destinataire du quizz',
+    )
+    date = models.DateTimeField(
+        null=False,
+        blank=False,
+        unique=True,
+        verbose_name="date d'envoi du quizz",
+        help_text="date d'envoi du quizz à un groupe"
+    )
+
+    class Meta:
+        ordering = ['-date']
+        verbose_name = 'Envoi de quizz'
+        verbose_name_plural = 'Envois de quizz'
+
+    def __str__(self):
+        return f'envoi du {self.date} de {self.quizz} à {self.group}'
+
+    def get_absolute_url(self):
+        return reverse('quizz_quizzsending_detail', args=[str(self.date)])

@@ -31,7 +31,7 @@ Un envoi de questionnaire a :
 
  * une date
  * une référence à un questionnaire
- * une référence à un groupe de personne
+ * une référence à un groupe de personne (pour surveiller que tout le monde a répondu)
 
 Une réponse a :
 
