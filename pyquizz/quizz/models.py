@@ -103,7 +103,7 @@ class Question(models.Model):
         return reverse('quizz_question_detail', args=[str(self.slug)])
 
     def possible_answers(self):
-        return str(self.answers).split('----\r\n')
+        return str(self.answers).split('----\r\n') + ['Sans opinion']
 
 
 class Quizz(models.Model):
