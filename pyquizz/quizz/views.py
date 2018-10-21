@@ -2,9 +2,10 @@ import random
 
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.views.generic import TemplateView, View
+from django.views.generic import FormView, View
 
 from .models import Answer, QuizzSending
+from .forms import AnswerForm
 
 
 class Home(View):
@@ -12,18 +13,28 @@ class Home(View):
         return HttpResponse('Ça marche !')
 
 
-class AnswerAQuestion(TemplateView):
+class AnswerAQuestion(FormView):
     template_name = 'quizz/answer_a_question.html'
+    success_url = 'form'
+    form_class = AnswerForm
+
+    def get(self, request, *args, **kwargs):
+        self.date = kwargs['date']
+        self.email = kwargs['email']
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.date = kwargs['date']
+        self.email = kwargs['email']
+        return super().post(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         # TODO better usage of ORM
         kwargs = super().get_context_data(**kwargs)
-        date = kwargs['date']
-        quizz_sending = QuizzSending.objects.filter(date=date).first()
-        email = kwargs['email']
+        quizz_sending = QuizzSending.objects.filter(date=self.date).first()
         answers_from_email = Answer.objects.\
             filter(quizz_sending=quizz_sending).\
-            filter(person__email=email)
+            filter(person__email=self.email)
         quizz = quizz_sending.quizz
         unanswered_questions = []
         print(quizz.questions.all())
@@ -45,4 +56,8 @@ class AnswerAQuestion(TemplateView):
         kwargs['quizz_sending'] = quizz_sending
         kwargs['answers_from_email'] = answers_from_email
         kwargs['unanswered_questions'] = unanswered_questions
+
+        kwargs['date_for_url'] = self.date.strftime('%Y-%m-%d--%H-%M')
+        kwargs['date'] = self.date
+        kwargs['email'] = self.email
         return kwargs

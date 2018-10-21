@@ -10,7 +10,7 @@
     <div class="alert alert-primary" role="alert">
         {{ question.statement }}
     </div>
-    <form action="TODO" method="post">
+    <form action="{% url 'form' email=email date=date_for_url %}" method="post">
         {% csrf_token %}
         <input id="email" type="hidden" value="{{ email }}">
         <input id="question" type="hidden" value="{{ question.pk }}">

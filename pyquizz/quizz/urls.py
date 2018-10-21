@@ -39,6 +39,6 @@ register_converter(DateTimeConverter, 'date')
 
 
 urlpatterns = [
-    path('<email:email>/<date:date>/', AnswerAQuestion.as_view()),
+    path('<email:email>/<date:date>/', AnswerAQuestion.as_view(), name='form'),
     path('', Home.as_view(), name='home'),
 ]
