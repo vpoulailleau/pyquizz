@@ -10,10 +10,18 @@
     <div class="alert alert-primary" role="alert">
         {{ question.statement }}
     </div>
-    <ul>
-        {% for possible_answer in question.possible_answers %}
-        <li>{{ possible_answer }}</li>
-        {% endfor %}
-    </ul>
+    <form action="TODO" method="post">
+        {% csrf_token %}
+        <input id="email" type="hidden" value="{{ email }}">
+        <input id="question" type="hidden" value="{{ question.pk }}">
+        <input id="quizz_sending" type="hidden" value="{{ quizz_sending.pk }}">
+        <ul>
+            {% for possible_answer in question.possible_answers %}
+            <li><input id="answer{{ forloop.counter0 }}" type="checkbox"> {{ possible_answer }}</li>
+            {% endfor %}
+        </ul>
+        <button type="submit" class="btn btn-success">Envoyer</button>
+        <button type="reset" class="btn btn-danger">Annuler</button>
+    </form>
 </div>
 {% endblock %}
