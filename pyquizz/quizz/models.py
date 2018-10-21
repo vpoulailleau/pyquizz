@@ -103,4 +103,42 @@ class Question(models.Model):
         return reverse('quizz_question_detail', args=[str(self.slug)])
 
 
-# For large amounts of text, use TextField, default widget is then textarea.
+class Quizz(models.Model):
+    name = models.CharField(
+        null=False,
+        blank=False,
+        unique=True,
+        verbose_name='nom',
+        help_text='nom du quizz',
+        max_length=128,
+    )
+    slug = models.SlugField(
+        null=False,
+        blank=False,
+        unique=True,
+        verbose_name='slug',
+        help_text='slug du quizz (basé sur le nom)',
+        max_length=150,
+    )
+    questions = models.ManyToManyField(
+        Question,
+        related_name='quizzes',
+    )
+    random_question_order = models.BooleanField(
+        null=False,
+        blank=False,
+        default=True,
+        verbose_name='ordre aléatoire des questions',
+        help_text='est-ce que les questions seront posées en ordre aléatoire',
+    )
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Quizz'
+        verbose_name_plural = 'Quizzes'
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('quizz_quizz_detail', args=[str(self.slug)])
