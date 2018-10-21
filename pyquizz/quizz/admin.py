@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html, format_html_join
 
-from .models import Group, Person, Question, Quizz, QuizzSending
+from .models import Group, Person, Question, Quizz, QuizzSending, Answer
 
 
 def format_list(generator):
@@ -54,3 +54,30 @@ class QuizzAdmin(admin.ModelAdmin):
 @admin.register(QuizzSending)
 class QuizzSendingAdmin(admin.ModelAdmin):
     list_display = ('date', 'quizz', 'group')
+
+
+@admin.register(Answer)
+class AnswerAdmin(admin.ModelAdmin):
+    def quizz_sending_quizz(self, obj):
+        return str(obj.quizz_sending.quizz)
+    quizz_sending_quizz.short_description = 'quizz'
+
+    def answers_display(self, obj):
+        possible_answers = obj.question.possible_answers()
+        chosen_answers = obj.chosen_answers()
+        answers = []
+        for chosen_answer in chosen_answers:
+            try:
+                answers.append(possible_answers[int(chosen_answer)])
+            except (IndexError, ValueError):
+                answers.append('Réponse invalide')
+        return format_list(answers)
+    answers_display.short_description = 'réponses'
+
+    list_display = (
+        'quizz_sending_quizz',
+        'person',
+        'question',
+        'answers_display',
+        'quizz_sending',
+    )

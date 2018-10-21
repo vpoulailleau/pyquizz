@@ -88,7 +88,7 @@ class Question(models.Model):
         verbose_name='réponses correctes',
         help_text=('numéro des réponses correctes à la question '
                    'séparées par des virgules, démarrant à 0'),
-        max_length=10,
+        max_length=20,
     )
 
     class Meta:
@@ -101,6 +101,9 @@ class Question(models.Model):
 
     def get_absolute_url(self):
         return reverse('quizz_question_detail', args=[str(self.slug)])
+
+    def possible_answers(self):
+        return str(self.answers).split('----\r\n')
 
 
 class Quizz(models.Model):
@@ -181,3 +184,57 @@ class QuizzSending(models.Model):
 
     def get_absolute_url(self):
         return reverse('quizz_quizzsending_detail', args=[str(self.date)])
+
+
+class Answer(models.Model):
+    quizz_sending = models.ForeignKey(
+        QuizzSending,
+        on_delete=models.CASCADE,
+        related_name='answers',
+        blank=False,
+        null=False,
+        verbose_name='envoi de quizz',
+        help_text='envoi de quizz',
+    )
+    person = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name='answers',
+        blank=False,
+        null=False,
+        verbose_name='personne questionnée',
+        help_text='personne questionnée',
+    )
+    question = models.ForeignKey(
+        Question,
+        on_delete=models.CASCADE,
+        related_name='sent_answers',
+        blank=False,
+        null=False,
+        verbose_name='question',
+        help_text='question posée',
+    )
+    answers = models.CharField(
+        null=False,
+        blank=False,
+        unique=False,
+        verbose_name='réponses choisies',
+        help_text=('numéro des réponses choisies à la question '
+                   'séparées par des virgules, démarrant à 0'),
+        max_length=20,
+    )
+
+    class Meta:
+        ordering = ['quizz_sending', 'person', 'question']
+        verbose_name = 'Réponse à une question'
+        verbose_name_plural = 'Réponses à des questions'
+
+    def __str__(self):
+        return (f'réponse de {self.person} à {self.quizz_sending} '
+                f'à la question {self.question} : {self.answers}')
+
+    def get_absolute_url(self):
+        return reverse('quizz_answer_detail', args=[str(self.pk)])
+
+    def chosen_answers(self):
+        return str(self.answers).split(',')
