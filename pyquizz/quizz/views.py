@@ -68,6 +68,7 @@ class AnswerAQuestion(FormView):
         kwargs['quizz_sending'] = quizz_sending
         kwargs['answers_from_email'] = answers_from_email
         kwargs['unanswered_questions'] = unanswered_questions
+        kwargs['nb_questions_left'] = len(unanswered_questions)
 
         kwargs['date_for_url'] = self.date_for_url
         kwargs['date'] = self.date

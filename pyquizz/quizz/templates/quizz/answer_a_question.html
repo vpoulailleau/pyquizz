@@ -4,14 +4,17 @@
 
 {% block content %}
 <div class="container">
+    {% if finished %}
     <div class="alert alert-secondary" role="alert">
         {{ email }} - {{ date }}
     </div>
-    {% if finished %}
     <div class="alert alert-primary" role="alert">
         Le questionnaire est fini ! Merci pour la participation.
     </div>
     {% else %}
+    <div class="alert alert-secondary" role="alert">
+        {{ email }} - {{ date }} - Plus que {{ nb_questions_left }} questions.
+    </div>
     <div class="alert alert-primary" role="alert">
         {{ question.statement }}
     </div>
