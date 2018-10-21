@@ -10,14 +10,15 @@
     <div class="alert alert-primary" role="alert">
         {{ question.statement }}
     </div>
-    <form action="{% url 'form' email=email date=date_for_url %}" method="post">
+    <form action="{% url 'form' email=email date=date_for_url %}" method="POST">
         {% csrf_token %}
-        <input id="email" type="hidden" value="{{ email }}">
-        <input id="question" type="hidden" value="{{ question.pk }}">
-        <input id="quizz_sending" type="hidden" value="{{ quizz_sending.pk }}">
+        <input id="email" name="email" type="hidden" value="{{ email }}">
+        <input id="question" name="question" type="hidden" value="{{ question.pk }}">
+        <input id="quizz_sending" name="quizz_sending" type="hidden" value="{{ quizz_sending.pk }}">
         <ul>
             {% for possible_answer in question.possible_answers %}
-            <li><input id="answer{{ forloop.counter0 }}" type="checkbox"> {{ possible_answer }}</li>
+            <li><input id="answer{{ forloop.counter0 }}" name="answer{{ forloop.counter0 }}" type="checkbox">
+                {{ possible_answer }}</li>
             {% endfor %}
         </ul>
         <button type="submit" class="btn btn-success">Envoyer</button>

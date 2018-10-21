@@ -28,6 +28,10 @@ class AnswerAQuestion(FormView):
         self.email = kwargs['email']
         return super().post(request, *args, **kwargs)
 
+    def form_valid(self, form):
+        form.add_answer_in_database()
+        return super().form_valid(form)
+
     def get_context_data(self, **kwargs):
         # TODO better usage of ORM
         kwargs = super().get_context_data(**kwargs)
@@ -37,7 +41,6 @@ class AnswerAQuestion(FormView):
             filter(person__email=self.email)
         quizz = quizz_sending.quizz
         unanswered_questions = []
-        print(quizz.questions.all())
         for question in quizz.questions.all():
             if answers_from_email.filter(question=question):
                 continue
