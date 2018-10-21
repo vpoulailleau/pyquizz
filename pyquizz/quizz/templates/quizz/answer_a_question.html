@@ -7,6 +7,11 @@
     <div class="alert alert-secondary" role="alert">
         {{ email }} - {{ date }}
     </div>
+    {% if finished %}
+    <div class="alert alert-primary" role="alert">
+        Le questionnaire est fini ! Merci pour la participation.
+    </div>
+    {% else %}
     <div class="alert alert-primary" role="alert">
         {{ question.statement }}
     </div>
@@ -24,5 +29,7 @@
         <button type="submit" class="btn btn-success">Envoyer</button>
         <button type="reset" class="btn btn-danger">Annuler</button>
     </form>
+    {% endif %}
+
 </div>
-{% endblock %}
+{% endblock %}f
