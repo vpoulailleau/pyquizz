@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Group, Person
+from .models import Group, Person, Question
 
 
 @admin.register(Person)
@@ -16,3 +16,8 @@ class PersonAdmin(admin.ModelAdmin):
 class GroupAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     filter_horizontal = ('persons',)
+
+
+@admin.register(Question)
+class QuestionAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ('statement',)}

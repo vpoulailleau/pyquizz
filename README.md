@@ -21,8 +21,9 @@ Un questionnaire a :
 Une question a :
 
  * un énoncé
- * une liste des réponses possibles (un champ texte séparé par des # ?)
- * une liste des réponses correctes (un numéro dans la liste des réponses possibles, démarrant à 0)
+ * une liste des réponses possibles (un champ texte séparé par des ----)
+ * une liste des réponses correctes (un numéro dans la liste des réponses possibles, démarrant à 0, séparé par des virgules)
+ * au passage les textes sont en markdown
 
 Il faut qu'une personne puisse répondre plusieurs fois à la même question (genre questionnaire d'autoévaluation).
 
