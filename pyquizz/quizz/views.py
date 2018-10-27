@@ -3,10 +3,10 @@ import random
 from django.contrib import messages
 from django.http import HttpResponse
 from django.urls import reverse
-from django.views.generic import FormView, View
+from django.views.generic import FormView, TemplateView, View
 
-from .models import Answer, QuizzSending
 from .forms import AnswerForm
+from .models import Answer, QuizzSending
 
 
 class Home(View):
@@ -58,15 +58,15 @@ class AnswerAQuestion(FormView):
         kwargs['form'] = self.get_form()
 
         quizz_sending = QuizzSending.objects.filter(date=self.date).first()
-        answers_from_email = Answer.objects.\
-            filter(quizz_sending=quizz_sending).\
-            filter(person__email=self.email)
         if not quizz_sending:
             messages.error(
                 self.request,
                 'Pas de quizz correspondant à cette date')
             kwargs['nb_questions_left'] = 0
             return kwargs
+        answers_from_email = Answer.objects.\
+            filter(quizz_sending=quizz_sending).\
+            filter(person__email=self.email)
         quizz = quizz_sending.quizz
         unanswered_questions = []
         for question in quizz.questions.all():
@@ -88,4 +88,29 @@ class AnswerAQuestion(FormView):
         kwargs['answers_from_email'] = answers_from_email
         kwargs['unanswered_questions'] = unanswered_questions
         kwargs['nb_questions_left'] = len(unanswered_questions)
+        return kwargs
+
+
+class Statistics(TemplateView):
+    template_name = 'quizz/statistics.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
+        quizz_sending = QuizzSending.objects.filter(
+            date=kwargs['date']).first()
+        if not quizz_sending:
+            messages.error(
+                self.request,
+                'Pas de quizz correspondant à cette date')
+            kwargs['quizz_sending'] = None
+            return kwargs
+        quizz = quizz_sending.quizz
+        group = quizz_sending.group
+        kwargs['quizz_sending'] = quizz_sending
+        kwargs['nb_questions'] = (
+            quizz.questions.count() * group.persons.count())
+        kwargs['nb_answered_questions'] = Answer.objects.filter(
+            quizz_sending=quizz_sending).count()
+        kwargs['percent_answered_questions'] = (
+            100 * kwargs['nb_answered_questions'] // kwargs['nb_questions'])
         return kwargs
