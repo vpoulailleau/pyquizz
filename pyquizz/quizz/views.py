@@ -94,6 +94,15 @@ class AnswerAQuestion(FormView):
 class Statistics(TemplateView):
     template_name = 'quizz/statistics.html'
 
+    class Progress:
+        def __init__(self, value, max_value):
+            self.value = value
+            self.max_value = max_value
+
+        @property
+        def percentage(self):
+            return 100 * self.value // self.max_value
+
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
         quizz_sending = QuizzSending.objects.filter(
@@ -107,6 +116,12 @@ class Statistics(TemplateView):
         quizz = quizz_sending.quizz
         group = quizz_sending.group
         kwargs['quizz_sending'] = quizz_sending
+        progress_questions = self.Progress(
+            value=Answer.objects.filter(
+                quizz_sending=quizz_sending).count(),
+            max_value=quizz.questions.count() * group.persons.count()
+        )
+        kwargs['total_questions'] = progress_questions
         kwargs['nb_questions'] = (
             quizz.questions.count() * group.persons.count())
         kwargs['nb_answered_questions'] = Answer.objects.filter(

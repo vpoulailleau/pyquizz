@@ -8,11 +8,11 @@
     <h2>Destinataires</h2>
     <p>Quizz envoyé à {{ quizz_sending.group.name }}.</p>
     <h2>Réponses reçues</h2>
-    <p>{{ nb_answered_questions }} questions répondues sur {{ nb_questions }} questions envoyées.</p>
+    <p>{{ total_questions.value }} questions répondues sur {{ total_questions.max_value }} questions envoyées.</p>
     <div class="progress">
-        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ percent_answered_questions }}%;"
-            aria-valuenow="{{ nb_answered_questions }}" aria-valuemin="0" aria-valuemax="{{ nb_questions }}">
-            {{ percent_answered_questions }}%
+        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ total_questions.percentage }}%;"
+            aria-valuenow="{{ total_questions.value }}" aria-valuemin="0" aria-valuemax="{{ total_questions.max_value }}">
+            {{ total_questions.percentage }}%
         </div>
     </div>
 </div>
