@@ -105,6 +105,13 @@ class Question(models.Model):
     def possible_answers(self):
         return str(self.answers).split('----\r\n') + ['Sans opinion']
 
+    def correct_answers_text(self):
+        correct_answers = [
+            int(num) for num in str(
+                self.correct_answers).split(',')]
+        possible_answers = self.possible_answers()
+        return [possible_answers[i] for i in correct_answers]
+
 
 class Quizz(models.Model):
     name = models.CharField(
