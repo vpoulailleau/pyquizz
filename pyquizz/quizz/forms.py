@@ -18,8 +18,16 @@ class AnswerForm(forms.Form):
     answer8 = forms.BooleanField(required=False)
     answer9 = forms.BooleanField(required=False)
 
+    # TODO attention il faut afficher un message d'erreur
+    # TODO et il faut reposer la même question
+    # TODO accepter uniqument si faisant parti du groupe du quizz
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if not Person.objects.filter(email=email):
+            raise forms.ValidationError("Email inconnu")
+        return email
+
     def add_answer_in_database(self):
-        # using the self.cleaned_data
         quizz_sending = QuizzSending.objects.get(
             pk=self.cleaned_data['quizz_sending'])
         person = Person.objects.get(email=self.cleaned_data['email'])

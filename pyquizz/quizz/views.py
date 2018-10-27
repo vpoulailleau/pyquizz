@@ -35,6 +35,13 @@ class AnswerAQuestion(FormView):
         form.add_answer_in_database()
         return super().form_valid(form)
 
+    def form_invalid(self, form):
+        for error in form.errors.values():
+            messages.error(
+                self.request,
+                error)
+        return super().form_invalid(form)
+
     def get_success_url(self):
         return reverse(
             'form',
@@ -49,6 +56,7 @@ class AnswerAQuestion(FormView):
         kwargs['date_for_url'] = self.date_for_url
         kwargs['date'] = self.date
         kwargs['email'] = self.email
+        kwargs['form'] = self.get_form()
 
         quizz_sending = QuizzSending.objects.filter(date=self.date).first()
         answers_from_email = Answer.objects.\
