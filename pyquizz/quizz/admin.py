@@ -36,7 +36,11 @@ class QuestionAdmin(admin.ModelAdmin):
         return format_list(obj.quizzes.all())
     quizzes_display.short_description = 'quizz'
 
-    list_display = ('statement', 'quizzes_display')
+    def answers_display(self, obj):
+        return format_list(obj.correct_answers_text())
+    answers_display.short_description = 'réponses'
+
+    list_display = ('statement', 'quizzes_display', 'answers_display')
     prepopulated_fields = {'slug': ('statement',)}
 
 
