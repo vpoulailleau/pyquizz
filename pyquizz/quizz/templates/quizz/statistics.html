@@ -8,12 +8,42 @@
     <h2>Destinataires</h2>
     <p>Quizz envoyé à {{ quizz_sending.group.name }}.</p>
     <h2>Réponses reçues</h2>
-    <p>{{ total_questions.value }} questions répondues sur {{ total_questions.max_value }} questions envoyées.</p>
-    <div class="progress">
-        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ total_questions.percentage }}%;"
-            aria-valuenow="{{ total_questions.value }}" aria-valuemin="0" aria-valuemax="{{ total_questions.max_value }}">
-            {{ total_questions.percentage }}%
-        </div>
-    </div>
+    <table class="table table-borderless table-striped">
+        <thead>
+            <tr>
+                <th scope="col" class="w-25">Email</th>
+                <th scope="col">Avancement</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr scope="row">
+                <td>{{ total_questions.value }} questions répondues sur {{ total_questions.max_value }} questions
+                    envoyées.</td>
+                <td>
+                    <div class="progress">
+                        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
+                            style="width: {{ total_questions.percentage }}%;" aria-valuenow="{{ total_questions.value }}"
+                            aria-valuemin="0" aria-valuemax="{{ total_questions.max_value }}">
+                            {{ total_questions.percentage }}%
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% for person in persons_answered_questions %}
+            <tr scope="row">
+                <td>{{ person.email }}</td>
+                <td>
+                    <div class="progress">
+                        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
+                            style="width: {{ person.progress.percentage }}%;" aria-valuenow="{{ person.progress.value }}"
+                            aria-valuemin="0" aria-valuemax="{{ person.progress.max_value }}">
+                            {{ person.progress.percentage }}%
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
-{% endblock %}f
+{% endblock %}

@@ -91,17 +91,24 @@ class AnswerAQuestion(FormView):
         return kwargs
 
 
+class Progress:
+    def __init__(self, value, max_value):
+        self.value = value
+        self.max_value = max_value
+
+    @property
+    def percentage(self):
+        return 100 * self.value // self.max_value
+
+
+class Person:
+    def __init__(self, email, value, max_value):
+        self.email = email
+        self.progress = Progress(value, max_value)
+
+
 class Statistics(TemplateView):
     template_name = 'quizz/statistics.html'
-
-    class Progress:
-        def __init__(self, value, max_value):
-            self.value = value
-            self.max_value = max_value
-
-        @property
-        def percentage(self):
-            return 100 * self.value // self.max_value
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
@@ -115,17 +122,24 @@ class Statistics(TemplateView):
             return kwargs
         quizz = quizz_sending.quizz
         group = quizz_sending.group
+        nb_questions = quizz.questions.count()
         kwargs['quizz_sending'] = quizz_sending
-        progress_questions = self.Progress(
+        kwargs['total_questions'] = Progress(
             value=Answer.objects.filter(
                 quizz_sending=quizz_sending).count(),
-            max_value=quizz.questions.count() * group.persons.count()
+            max_value=nb_questions * group.persons.count()
         )
-        kwargs['total_questions'] = progress_questions
-        kwargs['nb_questions'] = (
-            quizz.questions.count() * group.persons.count())
-        kwargs['nb_answered_questions'] = Answer.objects.filter(
-            quizz_sending=quizz_sending).count()
-        kwargs['percent_answered_questions'] = (
-            100 * kwargs['nb_answered_questions'] // kwargs['nb_questions'])
+        persons_answered_questions = []
+        for person in group.persons.all():
+            persons_answered_questions.append(
+                Person(
+                    email=person.email,
+                    value=Answer.objects.filter(
+                        quizz_sending=quizz_sending).filter(
+                            person__email=person.email).count(),
+                    max_value=nb_questions,
+                )
+            )
+        persons_answered_questions.sort(key=lambda p: p.email)
+        kwargs['persons_answered_questions'] = persons_answered_questions
         return kwargs
