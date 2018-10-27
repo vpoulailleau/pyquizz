@@ -1,5 +1,6 @@
 import random
 
+from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
@@ -44,10 +45,21 @@ class AnswerAQuestion(FormView):
     def get_context_data(self, **kwargs):
         # TODO better usage of ORM
         kwargs = super().get_context_data(**kwargs)
+
+        kwargs['date_for_url'] = self.date_for_url
+        kwargs['date'] = self.date
+        kwargs['email'] = self.email
+
         quizz_sending = QuizzSending.objects.filter(date=self.date).first()
         answers_from_email = Answer.objects.\
             filter(quizz_sending=quizz_sending).\
             filter(person__email=self.email)
+        if not quizz_sending:
+            messages.error(
+                self.request,
+                'Pas de quizz correspondant à cette date')
+            kwargs['nb_questions_left'] = 0
+            return kwargs
         quizz = quizz_sending.quizz
         unanswered_questions = []
         for question in quizz.questions.all():
@@ -69,8 +81,4 @@ class AnswerAQuestion(FormView):
         kwargs['answers_from_email'] = answers_from_email
         kwargs['unanswered_questions'] = unanswered_questions
         kwargs['nb_questions_left'] = len(unanswered_questions)
-
-        kwargs['date_for_url'] = self.date_for_url
-        kwargs['date'] = self.date
-        kwargs['email'] = self.email
         return kwargs

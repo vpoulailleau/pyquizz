@@ -11,8 +11,8 @@
         crossorigin="anonymous">
 
     <style>
-        #main {
-            margin-top: 5em;
+        body {
+            padding-top: 5em;
         }
     </style>
 </head>
@@ -54,7 +54,21 @@
         </div> -->
     </nav>
 
-    <div id="main" class="container">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="container">
+        <div class="{% if message.tags %}{{ message.tags }}{% else %}alert alert-primary{% endif %} alert-dismissible fade show"
+            role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <div id="main" class="container-fluid">
         {% block content %}
         {% endblock %}
     </div>
