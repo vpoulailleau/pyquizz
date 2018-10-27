@@ -100,6 +100,10 @@ class Progress:
     def percentage(self):
         return 100 * self.value // self.max_value
 
+    @property
+    def reverse_percentage(self):
+        return 100 - self.percentage
+
 
 class Person:
     def __init__(self, email, value, max_value):
@@ -129,6 +133,7 @@ class Statistics(TemplateView):
                 quizz_sending=quizz_sending).count(),
             max_value=nb_questions * group.persons.count()
         )
+
         persons_answered_questions = []
         for person in group.persons.all():
             persons_answered_questions.append(
@@ -142,4 +147,20 @@ class Statistics(TemplateView):
             )
         persons_answered_questions.sort(key=lambda p: p.email)
         kwargs['persons_answered_questions'] = persons_answered_questions
+
+        persons_correct_questions = []
+        for person in group.persons.all():
+            answers = Answer.objects.filter(
+                quizz_sending=quizz_sending).filter(
+                person__email=person.email).all()
+            persons_correct_questions.append(
+                Person(
+                    email=person.email,
+                    value=2,
+                    max_value=nb_questions,
+                )
+            )
+        persons_correct_questions.sort(key=lambda p: p.email)
+        kwargs['persons_correct_questions'] = persons_correct_questions
+
         return kwargs
