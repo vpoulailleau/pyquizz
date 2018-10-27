@@ -153,10 +153,14 @@ class Statistics(TemplateView):
             answers = Answer.objects.filter(
                 quizz_sending=quizz_sending).filter(
                 person__email=person.email).all()
+            nb_correct_answers = sum(
+                answer.answers == answer.question.correct_answers
+                for answer in answers
+            )
             persons_correct_questions.append(
                 Person(
                     email=person.email,
-                    value=2,
+                    value=nb_correct_answers,
                     max_value=nb_questions,
                 )
             )
