@@ -160,7 +160,7 @@ class QuizzStatistics(TemplateView):
                     max_value=nb_questions,
                 )
             )
-        persons_correct_questions.sort(key=lambda p: p.email)
+        persons_correct_questions.sort(key=lambda p: p.text)
         kwargs['persons_correct_questions'] = persons_correct_questions
 
         questions_status = []

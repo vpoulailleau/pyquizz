@@ -34,7 +34,7 @@
             <tbody>
                 {% for person in persons_answered_questions %}
                 <tr scope="row">
-                    <td>{{ person.email }}</td>
+                    <td>{{ person.text }}</td>
                     <td>
                         <div class="progress">
                             <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
@@ -54,6 +54,7 @@
     </div>
 
     <h2>Réponses correctes</h2>
+    <h3>Par personne</h3>
     <button class="btn btn-primary mb-3" type="button" data-toggle="collapse" data-target="#collapse_correct"
         aria-expanded="false" aria-controls="collapse_correct">
         Détail
@@ -69,7 +70,7 @@
             <tbody>
                 {% for person in persons_correct_questions %}
                 <tr scope="row">
-                    <td>{{ person.email }}</td>
+                    <td>{{ person.text }}</td>
                     <td>
                         <div class="progress">
                             <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
@@ -88,7 +89,7 @@
         </table>
     </div>
 
-    <h2>Par question</h2>
+    <h3>Par question</h3>
     <button class="btn btn-primary mb-3" type="button" data-toggle="collapse" data-target="#collapse_question"
         aria-expanded="false" aria-controls="collapse_question">
         Détail
@@ -102,18 +103,18 @@
                 </tr>
             </thead>
             <tbody>
-                {% for question, progress in questions.items %}
+                {% for question in questions %}
                 <tr scope="row">
-                    <td>{{ question }}</td>
+                    <td>{{ question.text }}</td>
                     <td>
                         <div class="progress">
                             <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
-                                style="width: {{ progress.percentage }}%;" aria-valuenow="{{ progress.value }}"
-                                aria-valuemin="0" aria-valuemax="{{ progress.max_value }}">
-                                {{ progress.percentage }}%
+                                style="width: {{ question.progress.percentage }}%;" aria-valuenow="{{ question.progress.value }}"
+                                aria-valuemin="0" aria-valuemax="{{ question.progress.max_value }}">
+                                {{ question.progress.percentage }}%
                             </div>
                             <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar"
-                                style="width: {{ progress.reverse_percentage }}%" aria-valuenow="{{ progress.reverse_percentage }}"
+                                style="width: {{ question.progress.reverse_percentage }}%" aria-valuenow="{{ question.progress.reverse_percentage }}"
                                 aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </td>
