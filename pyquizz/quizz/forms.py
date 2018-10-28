@@ -21,11 +21,17 @@ class AnswerForm(forms.Form):
     def clean_email(self):
         email = self.cleaned_data['email']
         if not Person.objects.filter(email=email):
-            raise forms.ValidationError('Email inconnu')
+            raise forms.ValidationError('Cet email est inconnu.')
         return email
 
     def clean(self):
         cleaned_data = super().clean()
+        if 'quizz_sending' not in cleaned_data:
+            raise forms.ValidationError(
+                "Ce quizz n'existe pas. Vérifiez la date.")
+        if 'email' not in cleaned_data:
+            raise forms.ValidationError(
+                "Cet email est inconnu.")
         quizz_sending = QuizzSending.objects.get(
             pk=cleaned_data['quizz_sending'])
         if not quizz_sending.group.persons.filter(
