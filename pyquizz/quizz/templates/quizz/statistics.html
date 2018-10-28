@@ -88,5 +88,39 @@
         </table>
     </div>
 
+    <h2>Par question</h2>
+    <button class="btn btn-primary mb-3" type="button" data-toggle="collapse" data-target="#collapse_question"
+        aria-expanded="false" aria-controls="collapse_question">
+        Détail
+    </button>
+    <div class="collapse" id="collapse_question">
+        <table class="table table-borderless table-striped">
+            <thead>
+                <tr>
+                    <th scope="col" class="w-25">Question</th>
+                    <th scope="col">Réponses correctes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for question, progress in questions.items %}
+                <tr scope="row">
+                    <td>{{ question }}</td>
+                    <td>
+                        <div class="progress">
+                            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
+                                style="width: {{ progress.percentage }}%;" aria-valuenow="{{ progress.value }}"
+                                aria-valuemin="0" aria-valuemax="{{ progress.max_value }}">
+                                {{ progress.percentage }}%
+                            </div>
+                            <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar"
+                                style="width: {{ progress.reverse_percentage }}%" aria-valuenow="{{ progress.reverse_percentage }}"
+                                aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

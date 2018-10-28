@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.views.generic import FormView, TemplateView
 
 from .forms import AnswerForm
-from .models import Answer, QuizzSending
+from .models import Answer, Question, QuizzSending
 
 
 class AnswerAQuestion(FormView):
@@ -122,11 +122,12 @@ class Statistics(TemplateView):
         quizz = quizz_sending.quizz
         group = quizz_sending.group
         nb_questions = quizz.questions.count()
+        nb_persons = group.persons.count()
         kwargs['quizz_sending'] = quizz_sending
         kwargs['total_questions'] = Progress(
             value=Answer.objects.filter(
                 quizz_sending=quizz_sending).count(),
-            max_value=nb_questions * group.persons.count()
+            max_value=nb_questions * nb_persons
         )
 
         persons_answered_questions = []
@@ -140,7 +141,7 @@ class Statistics(TemplateView):
                     max_value=nb_questions,
                 )
             )
-        persons_answered_questions.sort(key=lambda p: p.email)
+        persons_answered_questions.sort(key=lambda p: p.progress.value)
         kwargs['persons_answered_questions'] = persons_answered_questions
 
         persons_correct_questions = []
@@ -161,5 +162,21 @@ class Statistics(TemplateView):
             )
         persons_correct_questions.sort(key=lambda p: p.email)
         kwargs['persons_correct_questions'] = persons_correct_questions
+
+        questions_status = {}
+        questions = quizz.questions.all()
+        for question in questions:
+            answers = Answer.objects.filter(
+                quizz_sending=quizz_sending).filter(
+                question=question).all()
+            nb_correct_answers = sum(
+                answer.answers == answer.question.correct_answers
+                for answer in answers
+            )
+            questions_status[str(question.statement)] = Progress(
+                value=nb_correct_answers,
+                max_value=nb_persons,
+            )
+        kwargs['questions'] = questions_status
 
         return kwargs
