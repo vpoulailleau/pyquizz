@@ -193,11 +193,15 @@ class QuizzSending(models.Model):
         return reverse('quizz_quizzsending_detail', args=[str(self.date)])
 
     def __hash__(self):
-        return hash(('QuizzSending', self.date.strftime('%Y-%m-%d--%H-%M')))
+        return hash(('QuizzSending', self.date_for_url))
 
     @property
     def hash(self):
-        return hash(self)  # TODO renvoyer de l'hexadecimal
+        return hex(abs(hash(self)))
+
+    @property
+    def date_for_url(self):
+        return self.date.strftime('%Y-%m-%d--%H-%M')
 
 
 class Answer(models.Model):

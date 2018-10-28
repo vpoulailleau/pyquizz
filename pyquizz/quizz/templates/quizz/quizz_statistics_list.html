@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Statistiques</h1>
+    <ul>
+        {% for quizz_sending in quizz_sendings %}
+        <li><a href="{% url 'quizz_statistics' date=quizz_sending.date_for_url %}">{{ quizz_sending.date }} :
+                {{ quizz_sending.quizz.name }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

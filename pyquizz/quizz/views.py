@@ -214,3 +214,13 @@ class StudentStatistics(TemplateView):
         # TODO quizz_sendings_status.sort(key=lambda q: q.date, reverse=True)
         kwargs['quizzes'] = quizz_sendings_status
         return kwargs
+
+
+class QuizzStatisticsList(TemplateView):
+    template_name = 'quizz/quizz_statistics_list.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
+        quizz_sendings = QuizzSending.objects.order_by('-date')
+        kwargs['quizz_sendings'] = quizz_sendings
+        return kwargs
