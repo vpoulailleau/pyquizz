@@ -27,6 +27,9 @@
                             aria-valuemin="0" aria-valuemax="{{ total_questions.max_value }}">
                             {{ total_questions.percentage }}%
                         </div>
+                        <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar"
+                            style="width: {{ total_questions.reverse_percentage }}%;" aria-valuenow="{{ total_questions.value }}"
+                            aria-valuemin="0" aria-valuemax="{{ total_questions.max_value }}"></div>
                     </div>
                 </td>
             </tr>
@@ -40,6 +43,9 @@
                             aria-valuemin="0" aria-valuemax="{{ person.progress.max_value }}">
                             {{ person.progress.percentage }}%
                         </div>
+                        <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar"
+                            style="width: {{ person.progress.reverse_percentage }}%;" aria-valuenow="{{ person.progress.value }}"
+                            aria-valuemin="0" aria-valuemax="{{ person.progress.max_value }}"></div>
                     </div>
                 </td>
             </tr>
