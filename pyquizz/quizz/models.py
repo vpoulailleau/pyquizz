@@ -192,6 +192,13 @@ class QuizzSending(models.Model):
     def get_absolute_url(self):
         return reverse('quizz_quizzsending_detail', args=[str(self.date)])
 
+    def __hash__(self):
+        return hash(('QuizzSending', self.date.strftime('%Y-%m-%d--%H-%M')))
+
+    @property
+    def hash(self):
+        return hash(self)  # TODO renvoyer de l'hexadecimal
+
 
 class Answer(models.Model):
     quizz_sending = models.ForeignKey(

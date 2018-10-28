@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.views.generic import FormView, TemplateView
 
 from .forms import AnswerForm
-from .models import Answer, Question, QuizzSending
+from .models import Answer, Person, Question, QuizzSending
 
 
 class AnswerAQuestion(FormView):
@@ -100,13 +100,13 @@ class Progress:
         return 100 - self.percentage
 
 
-class Person:
-    def __init__(self, email, value, max_value):
-        self.email = email
+class Statistics:
+    def __init__(self, text, value, max_value):
+        self.text = text
         self.progress = Progress(value, max_value)
 
 
-class Statistics(TemplateView):
+class QuizzStatistics(TemplateView):
     template_name = 'quizz/statistics.html'
 
     def get_context_data(self, **kwargs):
@@ -133,8 +133,8 @@ class Statistics(TemplateView):
         persons_answered_questions = []
         for person in group.persons.all():
             persons_answered_questions.append(
-                Person(
-                    email=person.email,
+                Statistics(
+                    text=person.email,
                     value=Answer.objects.filter(
                         quizz_sending=quizz_sending).filter(
                             person__email=person.email).count(),
@@ -154,8 +154,8 @@ class Statistics(TemplateView):
                 for answer in answers
             )
             persons_correct_questions.append(
-                Person(
-                    email=person.email,
+                Statistics(
+                    text=person.email,
                     value=nb_correct_answers,
                     max_value=nb_questions,
                 )
@@ -163,7 +163,7 @@ class Statistics(TemplateView):
         persons_correct_questions.sort(key=lambda p: p.email)
         kwargs['persons_correct_questions'] = persons_correct_questions
 
-        questions_status = {}
+        questions_status = []
         questions = quizz.questions.all()
         for question in questions:
             answers = Answer.objects.filter(
@@ -173,10 +173,44 @@ class Statistics(TemplateView):
                 answer.answers == answer.question.correct_answers
                 for answer in answers
             )
-            questions_status[str(question.statement)] = Progress(
+            questions_status.append(Statistics(
+                text=str(question.statement),
                 value=nb_correct_answers,
                 max_value=nb_persons,
-            )
+            ))
         kwargs['questions'] = questions_status
 
+        return kwargs
+
+
+class StudentStatistics(TemplateView):
+    template_name = 'quizz/student_statistics.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
+        person = Person.objects.filter(email=kwargs['email']).first()
+        if not person:
+            messages.error(self.request, 'Cet email est inconnu.')
+            return kwargs
+        quizz_sending_id_values = Answer.objects.filter(
+            person=person).values('quizz_sending_id').distinct()
+        quizz_sendings_status = {}
+        for value in quizz_sending_id_values:
+            quizz_sending = QuizzSending.objects.get(
+                pk=value['quizz_sending_id'])
+            quizz_sendings_status[quizz_sending] = []
+            for question in quizz_sending.quizz.questions.all():
+                answers = Answer.objects.filter(
+                    quizz_sending=quizz_sending).filter(
+                    question=question).filter(person=person).all()
+                nb_correct_answers = sum(
+                    answer.answers == answer.question.correct_answers
+                    for answer in answers)
+                quizz_sendings_status[quizz_sending].append(Statistics(
+                    text=str(question.statement),
+                    value=nb_correct_answers,
+                    max_value=1,
+                ))
+        # TODO quizz_sendings_status.sort(key=lambda q: q.date, reverse=True)
+        kwargs['quizzes'] = quizz_sendings_status
         return kwargs
