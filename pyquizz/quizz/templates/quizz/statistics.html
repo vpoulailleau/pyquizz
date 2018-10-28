@@ -9,79 +9,84 @@
     <p>Quizz envoyé à {{ quizz_sending.group.name }}.</p>
 
     <h2>Réponses reçues</h2>
-    <table class="table table-borderless table-striped">
-        <thead>
-            <tr>
-                <th scope="col" class="w-25">Email</th>
-                <th scope="col">Avancement</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr scope="row">
-                <td>{{ total_questions.value }} questions répondues sur {{ total_questions.max_value }} questions
-                    envoyées.</td>
-                <td>
-                    <div class="progress">
-                        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
-                            style="width: {{ total_questions.percentage }}%;" aria-valuenow="{{ total_questions.value }}"
-                            aria-valuemin="0" aria-valuemax="{{ total_questions.max_value }}">
-                            {{ total_questions.percentage }}%
+    <p>{{ total_questions.value }} questions répondues sur {{ total_questions.max_value }} questions
+        envoyées.</p>
+    <div class="progress my-3">
+        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ total_questions.percentage }}%;"
+            aria-valuenow="{{ total_questions.value }}" aria-valuemin="0" aria-valuemax="{{ total_questions.max_value }}">
+            {{ total_questions.percentage }}%
+        </div>
+        <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ total_questions.reverse_percentage }}%;"
+            aria-valuenow="{{ total_questions.value }}" aria-valuemin="0" aria-valuemax="{{ total_questions.max_value }}"></div>
+    </div>
+    <button class="btn btn-primary mb-3" type="button" data-toggle="collapse" data-target="#collapse_reception"
+        aria-expanded="false" aria-controls="collapse_reception">
+        Détail
+    </button>
+    <div class="collapse" id="collapse_reception">
+        <table class="table table-borderless table-striped">
+            <thead>
+                <tr>
+                    <th scope="col" class="w-25">Email</th>
+                    <th scope="col">Avancement</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for person in persons_answered_questions %}
+                <tr scope="row">
+                    <td>{{ person.email }}</td>
+                    <td>
+                        <div class="progress">
+                            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
+                                style="width: {{ person.progress.percentage }}%;" aria-valuenow="{{ person.progress.value }}"
+                                aria-valuemin="0" aria-valuemax="{{ person.progress.max_value }}">
+                                {{ person.progress.percentage }}%
+                            </div>
+                            <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar"
+                                style="width: {{ person.progress.reverse_percentage }}%;" aria-valuenow="{{ person.progress.value }}"
+                                aria-valuemin="0" aria-valuemax="{{ person.progress.max_value }}"></div>
                         </div>
-                        <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar"
-                            style="width: {{ total_questions.reverse_percentage }}%;" aria-valuenow="{{ total_questions.value }}"
-                            aria-valuemin="0" aria-valuemax="{{ total_questions.max_value }}"></div>
-                    </div>
-                </td>
-            </tr>
-            {% for person in persons_answered_questions %}
-            <tr scope="row">
-                <td>{{ person.email }}</td>
-                <td>
-                    <div class="progress">
-                        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
-                            style="width: {{ person.progress.percentage }}%;" aria-valuenow="{{ person.progress.value }}"
-                            aria-valuemin="0" aria-valuemax="{{ person.progress.max_value }}">
-                            {{ person.progress.percentage }}%
-                        </div>
-                        <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar"
-                            style="width: {{ person.progress.reverse_percentage }}%;" aria-valuenow="{{ person.progress.value }}"
-                            aria-valuemin="0" aria-valuemax="{{ person.progress.max_value }}"></div>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     <h2>Réponses correctes</h2>
-    <table class="table table-borderless table-striped">
-        <thead>
-            <tr>
-                <th scope="col" class="w-25">Email</th>
-                <th scope="col">Réponses correctes</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for person in persons_correct_questions %}
-            <tr scope="row">
-                <td>{{ person.email }}</td>
-                <td>
-                    <div class="progress">
-                        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
-                            style="width: {{ person.progress.percentage }}%;" aria-valuenow="{{ person.progress.value }}"
-                            aria-valuemin="0" aria-valuemax="{{ person.progress.max_value }}">
-                            {{ person.progress.percentage }}%
+    <button class="btn btn-primary mb-3" type="button" data-toggle="collapse" data-target="#collapse_correct"
+        aria-expanded="false" aria-controls="collapse_correct">
+        Détail
+    </button>
+    <div class="collapse" id="collapse_correct">
+        <table class="table table-borderless table-striped">
+            <thead>
+                <tr>
+                    <th scope="col" class="w-25">Email</th>
+                    <th scope="col">Réponses correctes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for person in persons_correct_questions %}
+                <tr scope="row">
+                    <td>{{ person.email }}</td>
+                    <td>
+                        <div class="progress">
+                            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
+                                style="width: {{ person.progress.percentage }}%;" aria-valuenow="{{ person.progress.value }}"
+                                aria-valuemin="0" aria-valuemax="{{ person.progress.max_value }}">
+                                {{ person.progress.percentage }}%
+                            </div>
+                            <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar"
+                                style="width: {{ person.progress.reverse_percentage }}%" aria-valuenow="{{ person.progress.reverse_percentage }}"
+                                aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                        <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar"
-                            style="width: {{ person.progress.reverse_percentage }}%" aria-valuenow="{{ person.progress.reverse_percentage }}"
-                            aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 </div>
 {% endblock %}
