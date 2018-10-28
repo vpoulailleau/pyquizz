@@ -3,15 +3,10 @@ import random
 from django.contrib import messages
 from django.http import HttpResponse
 from django.urls import reverse
-from django.views.generic import FormView, TemplateView, View
+from django.views.generic import FormView, TemplateView
 
 from .forms import AnswerForm
 from .models import Answer, QuizzSending
-
-
-class Home(View):
-    def get(self, request):
-        return HttpResponse('Ça marche !')
 
 
 class AnswerAQuestion(FormView):

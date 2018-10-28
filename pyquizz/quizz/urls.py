@@ -3,7 +3,7 @@ from datetime import datetime
 
 from django.urls import path, register_converter
 
-from quizz.views import AnswerAQuestion, Home, Statistics
+from quizz.views import AnswerAQuestion, Statistics
 
 
 class EmailConverter:
@@ -41,5 +41,4 @@ register_converter(DateTimeConverter, 'date')
 urlpatterns = [
     path('<email:email>/<date:date>/', AnswerAQuestion.as_view(), name='form'),
     path('statistiques/<date:date>/', Statistics.as_view(), name='statistics'),
-    path('', Home.as_view(), name='home'),
 ]
