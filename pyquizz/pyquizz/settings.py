@@ -30,7 +30,7 @@ DEBUG = False
 
 # deployment
 if not DEBUG:
-    ALLOWED_HOSTS = ['127.0.0.1']
+    ALLOWED_HOSTS = ['127.0.0.1', '.vpoulailleau.alwaysdata.net']
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
