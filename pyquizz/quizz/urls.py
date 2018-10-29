@@ -7,7 +7,7 @@ from quizz.views import AnswerAQuestion, QuizzStatistics, QuizzStatisticsList, S
 
 
 class EmailConverter:
-    regex = r'\w+@\w+\.\w+'
+    regex = r'[\w.-]+@\w+\.\w+'
 
     def to_python(self, value):
         return value
