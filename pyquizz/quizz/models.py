@@ -89,6 +89,13 @@ class Question(models.Model):
         ),
         max_length=20,
     )
+    auto_evaluation = models.BooleanField(
+        null=False,
+        blank=False,
+        default=False,
+        verbose_name="question d'auto-évaluation",
+        help_text="est-ce une question d'auto-évaluation",
+    )
 
     class Meta:
         ordering = ["statement"]
@@ -102,9 +109,10 @@ class Question(models.Model):
         return reverse("quizz_question_detail", args=[str(self.slug)])
 
     def possible_answers(self):
-        return [
-            answer.strip() for answer in str(self.answers).split("----")
-        ] + ["Sans opinion"]
+        answers = [answer.strip() for answer in str(self.answers).split("----")]
+        if self.auto_evaluation:
+            answers.append("Sans opinion")
+        return answers
 
     def correct_answers_text(self):
         correct_answers = [
@@ -258,4 +266,3 @@ class Answer(models.Model):
 
     def chosen_answers(self):
         return str(self.answers).split(",")
-
