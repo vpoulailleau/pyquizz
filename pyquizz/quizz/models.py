@@ -98,7 +98,6 @@ class Question(models.Model):
     )
 
     class Meta:
-        ordering = ["statement"]
         verbose_name = "Question"
         verbose_name_plural = "Questions"
 
@@ -110,7 +109,7 @@ class Question(models.Model):
 
     def possible_answers(self):
         answers = [answer.strip() for answer in str(self.answers).split("----")]
-        if self.auto_evaluation:
+        if not self.auto_evaluation:
             answers.append("Sans opinion")
         return answers
 
@@ -120,6 +119,12 @@ class Question(models.Model):
         ]
         possible_answers = self.possible_answers()
         return [possible_answers[i] for i in correct_answers]
+
+    def nb_points(self, answer):
+        if self.auto_evaluation:
+            return max(int(a) for a in answer.chosen_answers()) / 3
+        else:
+            return int(answer.answers == self.correct_answers)
 
 
 class Quizz(models.Model):

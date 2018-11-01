@@ -93,7 +93,7 @@ class Progress:
 
     @property
     def percentage(self):
-        return 100 * self.value // self.max_value
+        return int(100 * self.value / self.max_value)
 
     @property
     def reverse_percentage(self):
@@ -149,14 +149,14 @@ class QuizzStatistics(TemplateView):
             answers = Answer.objects.filter(
                 quizz_sending=quizz_sending).filter(
                 person__email=person.email).all()
-            nb_correct_answers = sum(
-                answer.answers == answer.question.correct_answers
+            nb_points = sum(
+                answer.question.nb_points(answer)
                 for answer in answers
             )
             persons_correct_questions.append(
                 Statistics(
                     text=person.email,
-                    value=nb_correct_answers,
+                    value=nb_points,
                     max_value=nb_questions,
                 )
             )
@@ -169,13 +169,13 @@ class QuizzStatistics(TemplateView):
             answers = Answer.objects.filter(
                 quizz_sending=quizz_sending).filter(
                 question=question).all()
-            nb_correct_answers = sum(
-                answer.answers == answer.question.correct_answers
+            nb_points = sum(
+                answer.question.nb_points(answer)
                 for answer in answers
             )
             questions_status.append(Statistics(
                 text=str(question.statement),
-                value=nb_correct_answers,
+                value=nb_points,
                 max_value=nb_persons,
             ))
         kwargs['questions'] = questions_status
@@ -203,12 +203,13 @@ class StudentStatistics(TemplateView):
                 answers = Answer.objects.filter(
                     quizz_sending=quizz_sending).filter(
                     question=question).filter(person=person).all()
-                nb_correct_answers = sum(
-                    answer.answers == answer.question.correct_answers
-                    for answer in answers)
+                nb_points = sum(
+                    answer.question.nb_points(answer)
+                    for answer in answers
+                )
                 quizz_sendings_status[quizz_sending].append(Statistics(
                     text=str(question.statement),
-                    value=nb_correct_answers,
+                    value=nb_points,
                     max_value=1,
                 ))
         # TODO quizz_sendings_status.sort(key=lambda q: q.date, reverse=True)
