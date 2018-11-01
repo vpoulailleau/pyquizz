@@ -7,21 +7,21 @@ class Person(models.Model):
         null=False,
         blank=False,
         unique=True,
-        verbose_name='email',
-        help_text='email de la personne',
+        verbose_name="email",
+        help_text="email de la personne",
         max_length=255,
     )
 
     class Meta:
-        ordering = ['email']
-        verbose_name = 'Personne'
-        verbose_name_plural = 'Personnes'
+        ordering = ["email"]
+        verbose_name = "Personne"
+        verbose_name_plural = "Personnes"
 
     def __str__(self):
         return self.email
 
     def get_absolute_url(self):
-        return reverse('quizz_person_detail', args=[str(self.email)])
+        return reverse("quizz_person_detail", args=[str(self.email)])
 
 
 class Group(models.Model):
@@ -29,33 +29,30 @@ class Group(models.Model):
         null=False,
         blank=False,
         unique=True,
-        verbose_name='nom',
-        help_text='nom du groupe',
+        verbose_name="nom",
+        help_text="nom du groupe",
         max_length=32,
     )
     slug = models.SlugField(
         null=False,
         blank=False,
         unique=True,
-        verbose_name='slug',
-        help_text='slug du groupe (basé sur le nom)',
+        verbose_name="slug",
+        help_text="slug du groupe (basé sur le nom)",
         max_length=50,
     )
-    persons = models.ManyToManyField(
-        Person,
-        related_name='groups',
-    )
+    persons = models.ManyToManyField(Person, related_name="groups")
 
     class Meta:
-        ordering = ['name']
-        verbose_name = 'Groupe'
-        verbose_name_plural = 'Groupes'
+        ordering = ["name"]
+        verbose_name = "Groupe"
+        verbose_name_plural = "Groupes"
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('quizz_group_detail', args=[str(self.slug)])
+        return reverse("quizz_group_detail", args=[str(self.slug)])
 
 
 class Question(models.Model):
@@ -63,52 +60,56 @@ class Question(models.Model):
         null=False,
         blank=False,
         unique=True,
-        verbose_name='énoncé',
-        help_text='énoncé de la question',
+        verbose_name="énoncé",
+        help_text="énoncé de la question",
     )
     slug = models.SlugField(
         null=False,
         blank=False,
         unique=True,
-        verbose_name='slug',
-        help_text='slug de la question (basé sur l\'énoncé)',
+        verbose_name="slug",
+        help_text="slug de la question (basé sur l'énoncé)",
         max_length=256,
     )
     answers = models.TextField(
         null=False,
         blank=False,
         unique=False,
-        verbose_name='réponses',
-        help_text='réponses à la question séparées par des ----'
+        verbose_name="réponses",
+        help_text="réponses à la question séparées par des ----",
     )
     correct_answers = models.CharField(
         null=False,
         blank=False,
         unique=False,
-        verbose_name='réponses correctes',
-        help_text=('numéro des réponses correctes à la question '
-                   'séparées par des virgules, démarrant à 0'),
+        verbose_name="réponses correctes",
+        help_text=(
+            "numéro des réponses correctes à la question "
+            "séparées par des virgules, démarrant à 0"
+        ),
         max_length=20,
     )
 
     class Meta:
-        ordering = ['statement']
-        verbose_name = 'Question'
-        verbose_name_plural = 'Questions'
+        ordering = ["statement"]
+        verbose_name = "Question"
+        verbose_name_plural = "Questions"
 
     def __str__(self):
         return self.statement
 
     def get_absolute_url(self):
-        return reverse('quizz_question_detail', args=[str(self.slug)])
+        return reverse("quizz_question_detail", args=[str(self.slug)])
 
     def possible_answers(self):
-        return str(self.answers).split('----\r\n') + ['Sans opinion']
+        return [
+            answer.strip() for answer in str(self.answers).split("----")
+        ] + ["Sans opinion"]
 
     def correct_answers_text(self):
         correct_answers = [
-            int(num) for num in str(
-                self.correct_answers).split(',')]
+            int(num) for num in str(self.correct_answers).split(",")
+        ]
         possible_answers = self.possible_answers()
         return [possible_answers[i] for i in correct_answers]
 
@@ -118,82 +119,79 @@ class Quizz(models.Model):
         null=False,
         blank=False,
         unique=True,
-        verbose_name='nom',
-        help_text='nom du quizz',
+        verbose_name="nom",
+        help_text="nom du quizz",
         max_length=128,
     )
     slug = models.SlugField(
         null=False,
         blank=False,
         unique=True,
-        verbose_name='slug',
-        help_text='slug du quizz (basé sur le nom)',
+        verbose_name="slug",
+        help_text="slug du quizz (basé sur le nom)",
         max_length=150,
     )
-    questions = models.ManyToManyField(
-        Question,
-        related_name='quizzes',
-    )
+    questions = models.ManyToManyField(Question, related_name="quizzes")
     random_question_order = models.BooleanField(
         null=False,
         blank=False,
         default=True,
-        verbose_name='ordre aléatoire des questions',
-        help_text='est-ce que les questions seront posées en ordre aléatoire',
+        verbose_name="ordre aléatoire des questions",
+        help_text="est-ce que les questions seront posées en ordre aléatoire",
     )
 
     class Meta:
-        ordering = ['name']
-        verbose_name = 'Quizz'
-        verbose_name_plural = 'Quizzes'
+        ordering = ["name"]
+        verbose_name = "Quizz"
+        verbose_name_plural = "Quizzes"
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('quizz_quizz_detail', args=[str(self.slug)])
+        return reverse("quizz_quizz_detail", args=[str(self.slug)])
 
 
 class QuizzSending(models.Model):
     quizz = models.ForeignKey(
         Quizz,
         on_delete=models.CASCADE,
-        related_name='quizz_sendings',
+        related_name="quizz_sendings",
         blank=False,
         null=False,
-        verbose_name='quizz',
-        help_text='quizz à envoyer',
+        verbose_name="quizz",
+        help_text="quizz à envoyer",
     )
     group = models.ForeignKey(
         Group,
         on_delete=models.CASCADE,
-        related_name='quizz_sendings',
+        related_name="quizz_sendings",
         blank=False,
         null=False,
-        verbose_name='groupe',
-        help_text='groupe destinataire du quizz',
+        verbose_name="groupe",
+        help_text="groupe destinataire du quizz",
     )
     date = models.DateTimeField(
         null=False,
         blank=False,
         unique=True,
         verbose_name="date d'envoi du quizz",
-        help_text="date d'envoi du quizz à un groupe"
+        help_text="date d'envoi du quizz à un groupe",
     )
 
     class Meta:
-        ordering = ['-date']
-        verbose_name = 'Envoi de quizz'
-        verbose_name_plural = 'Envois de quizz'
+        ordering = ["-date"]
+        verbose_name = "Envoi de quizz"
+        verbose_name_plural = "Envois de quizz"
 
     def __str__(self):
-        return f'envoi du {self.date} de {self.quizz} à {self.group}'
+        return f"envoi du {self.date} de {self.quizz} à {self.group}"
 
     def get_absolute_url(self):
-        return reverse('quizz_quizzsending_detail', args=[str(self.date)])
+        return reverse("quizz_quizzsending_detail", args=[str(self.date)])
 
     def __hash__(self):
-        return hash(('QuizzSending', self.date_for_url))
+        return hash(("QuizzSending", self.date_for_url))
 
     @property
     def hash(self):
@@ -201,58 +199,63 @@ class QuizzSending(models.Model):
 
     @property
     def date_for_url(self):
-        return self.date.strftime('%Y-%m-%d--%H-%M')
+        return self.date.strftime("%Y-%m-%d--%H-%M")
 
 
 class Answer(models.Model):
     quizz_sending = models.ForeignKey(
         QuizzSending,
         on_delete=models.CASCADE,
-        related_name='answers',
+        related_name="answers",
         blank=False,
         null=False,
-        verbose_name='envoi de quizz',
-        help_text='envoi de quizz',
+        verbose_name="envoi de quizz",
+        help_text="envoi de quizz",
     )
     person = models.ForeignKey(
         Person,
         on_delete=models.CASCADE,
-        related_name='answers',
+        related_name="answers",
         blank=False,
         null=False,
-        verbose_name='personne questionnée',
-        help_text='personne questionnée',
+        verbose_name="personne questionnée",
+        help_text="personne questionnée",
     )
     question = models.ForeignKey(
         Question,
         on_delete=models.CASCADE,
-        related_name='sent_answers',
+        related_name="sent_answers",
         blank=False,
         null=False,
-        verbose_name='question',
-        help_text='question posée',
+        verbose_name="question",
+        help_text="question posée",
     )
     answers = models.CharField(
         null=False,
         blank=False,
         unique=False,
-        verbose_name='réponses choisies',
-        help_text=('numéro des réponses choisies à la question '
-                   'séparées par des virgules, démarrant à 0'),
+        verbose_name="réponses choisies",
+        help_text=(
+            "numéro des réponses choisies à la question "
+            "séparées par des virgules, démarrant à 0"
+        ),
         max_length=20,
     )
 
     class Meta:
-        ordering = ['quizz_sending', 'person', 'question']
-        verbose_name = 'Réponse à une question'
-        verbose_name_plural = 'Réponses à des questions'
+        ordering = ["quizz_sending", "person", "question"]
+        verbose_name = "Réponse à une question"
+        verbose_name_plural = "Réponses à des questions"
 
     def __str__(self):
-        return (f'réponse de {self.person} à {self.quizz_sending} '
-                f'à la question {self.question} : {self.answers}')
+        return (
+            f"réponse de {self.person} à {self.quizz_sending} "
+            f"à la question {self.question} : {self.answers}"
+        )
 
     def get_absolute_url(self):
-        return reverse('quizz_answer_detail', args=[str(self.pk)])
+        return reverse("quizz_answer_detail", args=[str(self.pk)])
 
     def chosen_answers(self):
-        return str(self.answers).split(',')
+        return str(self.answers).split(",")
+
