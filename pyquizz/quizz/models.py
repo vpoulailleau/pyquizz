@@ -122,8 +122,12 @@ class Question(models.Model):
 
     def nb_points(self, answer):
         if self.auto_evaluation:
+            ret = 0
+            for a in answer.chosen_answers():
+                if a:
+                    ret = min(2, max(int(a), ret))
             # consider that the user knows at least the subject
-            return min(2, max(int(a) for a in answer.chosen_answers())) / 2
+            return ret / 2
         else:
             return int(answer.answers == self.correct_answers)
 
