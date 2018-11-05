@@ -48,7 +48,7 @@ if not DEBUG:
             "file": {
                 "level": "DEBUG",
                 "class": "logging.FileHandler",
-                "filename": "~/pyquizz/debug_django.log",
+                "filename": "./debug_django.log",
                 "mode": "a",
             }
         },
