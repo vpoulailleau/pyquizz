@@ -101,8 +101,9 @@ class Progress:
 
 
 class Statistics:
-    def __init__(self, text, value, max_value):
+    def __init__(self, text, value, max_value, extra_text=''):
         self.text = text
+        self.extra_text = extra_text
         self.progress = Progress(value, max_value)
 
 
@@ -177,6 +178,7 @@ class QuizzStatistics(TemplateView):
                 text=str(question.statement),
                 value=nb_points,
                 max_value=nb_persons,
+                extra_text='\n'.join(question.possible_answers())
             ))
         kwargs['questions'] = questions_status
 
