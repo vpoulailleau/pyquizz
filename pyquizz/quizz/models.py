@@ -276,3 +276,10 @@ class Answer(models.Model):
 
     def chosen_answers(self):
         return str(self.answers).split(",")
+
+    def chosen_answers_textual(self):
+        possible_answers = self.question.possible_answers()
+        return [
+            possible_answers[int(index)]
+            for index in self.chosen_answers()
+        ]

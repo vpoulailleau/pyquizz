@@ -23,7 +23,14 @@
             <tbody>
                 {% for question in questions %}
                 <tr scope="row">
-                    <td>{{ question.text }}</td>
+                    <td>
+                        {{ question.text }}
+                        <ul>
+                        {% for answer in question.extra_text.splitlines %}
+                            <li>{{ answer }}</li>
+                        {% endfor %}
+                        </ul>
+                    </td>
                     <td>
                         <div class="progress">
                             <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
