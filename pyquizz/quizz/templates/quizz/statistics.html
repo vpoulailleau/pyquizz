@@ -2,6 +2,35 @@
 
 {% block title %}{% if quizz_sending %}{{ quizz_sending.quizz.name }}{% else %}Statistiques{% endif %}{% endblock %}
 
+{% block script %}
+    {{ block.super }}
+    <script type="text/javascript">
+    var reload_timer;
+
+    function launch_reload_timer() {
+        reload_timer = setTimeout(function(){
+                window.location.reload(1);
+            },
+            10000
+        );
+    }
+
+    function stop_reload_timer() {
+        clearTimeout(reload_timer);
+    }
+
+    window.onload = function() {
+        var a = document.getElementById("reloadstop");
+        a.onclick = function() {
+            stop_reload_timer();
+            return false;
+        }
+        launch_reload_timer();
+    }
+    </script>
+{% endblock %}
+
+
 {% block content %}
 <div class="container">
     <h1>Statistiques</h1>
@@ -23,7 +52,10 @@
         aria-expanded="false" aria-controls="collapse_reception">
         Détail
     </button>
-    <div class="collapse" id="collapse_reception">
+    <a class="btn btn-primary mb-3" type="button" id="reloadstop" href="#">
+        Désactiver le rechargement automatique
+    </a>
+    <div class="collapse show" id="collapse_reception">
         <table class="table table-borderless table-striped">
             <thead>
                 <tr>
