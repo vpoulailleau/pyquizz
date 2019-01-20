@@ -27,7 +27,7 @@ SECRET_KEY = "%mi(v5@*=bf$7djarac)8%d0&po53t+3tdnepiuqoad4kn0)e#"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-# DEBUG = False
+DEBUG = False
 
 # deployment
 if not DEBUG:
