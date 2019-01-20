@@ -27,7 +27,7 @@ SECRET_KEY = "%mi(v5@*=bf$7djarac)8%d0&po53t+3tdnepiuqoad4kn0)e#"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-DEBUG = False
+# DEBUG = False
 
 # deployment
 if not DEBUG:
@@ -146,7 +146,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
-
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "pyquizz/static"),)
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static_collected")
 
