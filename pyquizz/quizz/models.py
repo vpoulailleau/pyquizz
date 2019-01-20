@@ -159,7 +159,7 @@ class Quizz(models.Model):
     )
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["slug"]
         verbose_name = "Quizz"
         verbose_name_plural = "Quizzes"
 
