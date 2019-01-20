@@ -108,7 +108,7 @@
                             <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
                                 style="width: {{ person.progress.percentage }}%;" aria-valuenow="{{ person.progress.value }}"
                                 aria-valuemin="0" aria-valuemax="{{ person.progress.max_value }}">
-                                {{ person.progress.percentage }}%
+                                {{ person.progress.note }} / 20
                             </div>
                             <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar"
                                 style="width: {{ person.progress.reverse_percentage }}%" aria-valuenow="{{ person.progress.reverse_percentage }}"
