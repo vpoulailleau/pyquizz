@@ -275,11 +275,10 @@ class Answer(models.Model):
         return reverse("quizz_answer_detail", args=[str(self.pk)])
 
     def chosen_answers(self):
-        return str(self.answers).split(",")
+        if self.answers:
+            return str(self.answers).split(",")
+        return []
 
     def chosen_answers_textual(self):
         possible_answers = self.question.possible_answers()
-        return [
-            possible_answers[int(index)]
-            for index in self.chosen_answers()
-        ]
+        return [possible_answers[int(index)] for index in self.chosen_answers()]
