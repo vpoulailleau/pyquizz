@@ -8,9 +8,10 @@
 
     {% for quizz_sending, questions in quizzes.items %}
     <h2>{{ quizz_sending.quizz.name }} du {{ quizz_sending.date }}</h2>
+    <a  class="btn btn-primary mb-3" href="{% url 'quizz_statistics' date=quizz_sending.date_for_url %}">Détail de la classe</a>
     <button class="btn btn-primary mb-3" type="button" data-toggle="collapse" data-target="#collapse_{{quizz_sending.hash}}"
         aria-expanded="false" aria-controls="collapse_{{quizz_sending.hash}}">
-        Détail
+        Détail personnel
     </button>
     <div class="collapse" id="collapse_{{quizz_sending.hash}}">
         <table class="table table-borderless table-striped">
