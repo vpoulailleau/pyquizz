@@ -92,6 +92,10 @@ class Progress:
         return int(100 * self.value / self.max_value)
 
     @property
+    def note(self):
+        return self.percentage / 5
+
+    @property
     def reverse_percentage(self):
         return 100 - self.percentage
 
@@ -201,6 +205,8 @@ class StudentStatistics(TemplateView):
                 pk=value["quizz_sending_id"]
             )
             quizz_sendings_status[quizz_sending] = []
+            total_points = 0
+            max_total_points = 0
             for question in quizz_sending.quizz.questions.all():
                 answers = (
                     Answer.objects.filter(quizz_sending=quizz_sending)
@@ -211,6 +217,8 @@ class StudentStatistics(TemplateView):
                 nb_points = sum(
                     answer.question.nb_points(answer) for answer in answers
                 )
+                total_points += nb_points
+                max_total_points += 1
                 answers_text = "\n".join(
                     "\n".join(answer.chosen_answers_textual())
                     for answer in answers
@@ -223,6 +231,14 @@ class StudentStatistics(TemplateView):
                         extra_text=answers_text,
                     )
                 )
+            quizz_sendings_status[quizz_sending].insert(
+                0,
+                Statistics(
+                    text="Note du quiz",
+                    value=total_points,
+                    max_value=max_total_points,
+                ),
+            )
         # TODO quizz_sendings_status.sort(key=lambda q: q.date, reverse=True)
         kwargs["quizzes"] = quizz_sendings_status
         return kwargs

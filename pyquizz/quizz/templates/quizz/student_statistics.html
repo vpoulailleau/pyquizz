@@ -13,6 +13,19 @@
         aria-expanded="false" aria-controls="collapse_{{quizz_sending.hash}}">
         Détail personnel
     </button>
+    {% with questions|first as question %}
+        <div class="progress">
+            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
+                style="width: {{ question.progress.percentage }}%;" aria-valuenow="{{ question.progress.value }}"
+                aria-valuemin="0" aria-valuemax="{{ question.progress.max_value }}">
+                {{ question.progress.note }} / 20
+            </div>
+            <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar"
+                style="width: {{ question.progress.reverse_percentage }}%;" aria-valuenow="{{ question.progress.value }}"
+                aria-valuemin="0" aria-valuemax="{{ question.progress.max_value }}"></div>
+        </div>
+    {% endwith %}
+
     <div class="collapse" id="collapse_{{quizz_sending.hash}}">
         <table class="table table-borderless table-striped">
             <thead>
