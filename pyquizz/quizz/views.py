@@ -249,6 +249,8 @@ class QuizzStatisticsList(TemplateView):
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
-        quizz_sendings = QuizzSending.objects.order_by("-date")
+        quizz_sendings = QuizzSending.objects.order_by("-date").select_related(
+            "quizz"
+        )
         kwargs["quizz_sendings"] = quizz_sendings
         return kwargs
