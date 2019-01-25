@@ -1,4 +1,5 @@
 """pyquizz URL Configuration"""
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
@@ -11,5 +12,10 @@ urlpatterns = [
         "favicon.png", RedirectView.as_view(url="/static/pyquizz/favicon.png")
     ),
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+
+    urlpatterns += [path("__debug__/", include(debug_toolbar.urls))]
 
 urlpatterns += staticfiles_urlpatterns()

@@ -1,1 +1,4 @@
 django
+
+# dev only, normally in an other requirements file
+django-debug-toolbar
