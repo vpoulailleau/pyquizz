@@ -108,8 +108,10 @@ class Statistics:
         self.progress = Progress(value, max_value)
 
 
-FetchedAnswer = namedtuple("FetchedAnswer", ["email", "nb_points"])
-FetchedQuestion = namedtuple("FetchedQuestion", ["x"])
+FetchedAnswer = namedtuple("FetchedAnswer", ["email", "nb_points", "question"])
+FetchedQuestion = namedtuple(
+    "FetchedQuestion", ["pk", "statement", "possible_answers"]
+)
 FetchedPerson = namedtuple("FetchedPerson", ["email"])
 
 
@@ -140,7 +142,11 @@ class QuizzStatistics(TemplateView):
 
         fetched_questions = {}
         for question in quizz.questions.all():
-            fetched_questions[question.pk] = FetchedQuestion(x=0)
+            fetched_questions[question.pk] = FetchedQuestion(
+                pk=question.pk,
+                statement=question.statement,
+                possible_answers="\n".join(question.possible_answers()),
+            )
         fetched_persons = {}
         for person in group.persons.all():
             fetched_persons[person.email] = FetchedPerson(email=person.email)
@@ -149,6 +155,7 @@ class QuizzStatistics(TemplateView):
             fetched_answers[answer.pk] = FetchedAnswer(
                 email=answer.person.email,
                 nb_points=answer.question.nb_points(answer),
+                question=answer.question.pk,
             )
 
         nb_questions = len(fetched_questions)
@@ -179,32 +186,31 @@ class QuizzStatistics(TemplateView):
         persons_correct_questions = []
         for email in fetched_persons:
             answers = (
-                answer for answer in fetched_answers.values() if answer.email == email
+                answer
+                for answer in fetched_answers.values()
+                if answer.email == email
             )
-            nb_points = sum(
-                answer.nb_points for answer in answers
-            )
+            nb_points = sum(answer.nb_points for answer in answers)
             persons_correct_questions.append(
-                Statistics(
-                    text=email, value=nb_points, max_value=nb_questions
-                )
+                Statistics(text=email, value=nb_points, max_value=nb_questions)
             )
         persons_correct_questions.sort(key=lambda p: p.text)
         kwargs["persons_correct_questions"] = persons_correct_questions
 
         questions_status = []
-        questions = quizz.questions.all()
-        for question in questions:
-            answers = quizz_sending.answers.filter(question=question).all()
-            nb_points = sum(
-                answer.question.nb_points(answer) for answer in answers
+        for question in fetched_questions.values():
+            answers = (
+                answer
+                for answer in fetched_answers.values()
+                if answer.question == question.pk
             )
+            nb_points = sum(answer.nb_points for answer in answers)
             questions_status.append(
                 Statistics(
-                    text=str(question.statement),
+                    text=question.statement,
                     value=nb_points,
                     max_value=nb_persons,
-                    extra_text="\n".join(question.possible_answers()),
+                    extra_text=question.possible_answers,
                 )
             )
         kwargs["questions"] = questions_status
