@@ -9,6 +9,12 @@ from django.views.generic import FormView, TemplateView
 from .forms import AnswerForm
 from .models import Answer, Group, Person, Question, Quizz, QuizzSending
 
+FetchedAnswer = namedtuple("FetchedAnswer", ["email", "nb_points", "question"])
+FetchedQuestion = namedtuple(
+    "FetchedQuestion", ["pk", "statement", "possible_answers"]
+)
+FetchedPerson = namedtuple("FetchedPerson", ["email"])
+
 
 class AnswerAQuestion(FormView):
     template_name = "quizz/answer_a_question.html"
@@ -49,20 +55,47 @@ class AnswerAQuestion(FormView):
         kwargs["email"] = self.email
         kwargs["form"] = self.get_form()
 
-        quizz_sending = QuizzSending.objects.filter(date=self.date).first()
+        quizz_sending = (
+            QuizzSending.objects.filter(date=self.date)
+            .select_related("quizz")
+            .first()
+        )
         if not quizz_sending:
             messages.error(
                 self.request, "Pas de quizz correspondant à cette date"
             )
             kwargs["nb_questions_left"] = 0
             return kwargs
-        answers_from_email = Answer.objects.filter(
-            quizz_sending=quizz_sending
-        ).filter(person__email=self.email)
+        answers_from_email = (
+            Answer.objects.filter(quizz_sending=quizz_sending)
+            .select_related("person")
+            .filter(person__email=self.email)
+        )
+
         quizz = quizz_sending.quizz
-        unanswered_questions = []
+
+        fetched_answers = {}
+        for answer in answers_from_email.all():
+            fetched_answers[answer.pk] = FetchedAnswer(
+                email=answer.person.email,
+                nb_points=answer.question.nb_points(answer),
+                question=answer.question.pk,
+            )
+
+        fetched_questions = {}
         for question in quizz.questions.all():
-            if answers_from_email.filter(question=question):
+            fetched_questions[question.pk] = FetchedQuestion(
+                pk=question.pk,
+                statement=question.statement,
+                possible_answers="\n".join(question.possible_answers()),
+            )
+
+        unanswered_questions = []
+        for question in fetched_questions.values():
+            if any(
+                answer.question == question.pk
+                for answer in fetched_answers.values()
+            ):
                 continue
             unanswered_questions.append(question)
 
@@ -72,13 +105,11 @@ class AnswerAQuestion(FormView):
                 question = random.choice(unanswered_questions)
             else:
                 question = unanswered_questions[0]
-            kwargs["question"] = question
+            kwargs["question"] = Question.objects.get(pk=question.pk)
         else:
             kwargs["finished"] = True
 
         kwargs["quizz_sending"] = quizz_sending
-        kwargs["answers_from_email"] = answers_from_email
-        kwargs["unanswered_questions"] = unanswered_questions
         kwargs["nb_questions_left"] = len(unanswered_questions)
         return kwargs
 
@@ -106,13 +137,6 @@ class Statistics:
         self.text = text
         self.extra_text = extra_text
         self.progress = Progress(value, max_value)
-
-
-FetchedAnswer = namedtuple("FetchedAnswer", ["email", "nb_points", "question"])
-FetchedQuestion = namedtuple(
-    "FetchedQuestion", ["pk", "statement", "possible_answers"]
-)
-FetchedPerson = namedtuple("FetchedPerson", ["email"])
 
 
 class QuizzStatistics(TemplateView):
