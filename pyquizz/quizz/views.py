@@ -1,4 +1,5 @@
 import random
+from collections import namedtuple
 
 from django.contrib import messages
 from django.http import HttpResponse
@@ -6,7 +7,7 @@ from django.urls import reverse
 from django.views.generic import FormView, TemplateView
 
 from .forms import AnswerForm
-from .models import Answer, Person, Question, QuizzSending
+from .models import Answer, Group, Person, Question, Quizz, QuizzSending
 
 
 class AnswerAQuestion(FormView):
@@ -107,12 +108,27 @@ class Statistics:
         self.progress = Progress(value, max_value)
 
 
+FetchedAnswer = namedtuple("FetchedAnswer", ["email", "nb_points"])
+FetchedQuestion = namedtuple("FetchedQuestion", ["x"])
+FetchedPerson = namedtuple("FetchedPerson", ["email"])
+
+
 class QuizzStatistics(TemplateView):
     template_name = "quizz/statistics.html"
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
-        quizz_sending = QuizzSending.objects.filter(date=kwargs["date"]).first()
+        quizz_sending = (
+            QuizzSending.objects.filter(date=kwargs["date"])
+            .select_related("quizz")
+            .select_related("group")
+            .prefetch_related("quizz__questions")
+            .prefetch_related("group__persons")
+            .prefetch_related("answers")
+            .prefetch_related("answers__person")
+            .prefetch_related("answers__question")
+            .first()
+        )
         if not quizz_sending:
             messages.error(
                 self.request, "Pas de quizz correspondant à cette date"
@@ -121,22 +137,39 @@ class QuizzStatistics(TemplateView):
             return kwargs
         quizz = quizz_sending.quizz
         group = quizz_sending.group
-        nb_questions = quizz.questions.count()
-        nb_persons = group.persons.count()
+
+        fetched_questions = {}
+        for question in quizz.questions.all():
+            fetched_questions[question.pk] = FetchedQuestion(x=0)
+        fetched_persons = {}
+        for person in group.persons.all():
+            fetched_persons[person.email] = FetchedPerson(email=person.email)
+        fetched_answers = {}
+        for answer in quizz_sending.answers.all():
+            fetched_answers[answer.pk] = FetchedAnswer(
+                email=answer.person.email,
+                nb_points=answer.question.nb_points(answer),
+            )
+
+        nb_questions = len(fetched_questions)
+        nb_persons = len(fetched_persons)
         kwargs["quizz_sending"] = quizz_sending
         kwargs["total_questions"] = Progress(
-            value=Answer.objects.filter(quizz_sending=quizz_sending).count(),
-            max_value=nb_questions * nb_persons,
+            value=len(fetched_answers), max_value=nb_questions * nb_persons
         )
 
+        nb_answers_per_student = {}
+        for answer in fetched_answers.values():
+            nb_answers_per_student[answer.email] = (
+                nb_answers_per_student.get(answer.email, 0) + 1
+            )
+
         persons_answered_questions = []
-        for person in group.persons.all():
+        for email in fetched_persons:
             persons_answered_questions.append(
                 Statistics(
-                    text=person.email,
-                    value=Answer.objects.filter(quizz_sending=quizz_sending)
-                    .filter(person__email=person.email)
-                    .count(),
+                    text=email,
+                    value=nb_answers_per_student.get(email, 0),
                     max_value=nb_questions,
                 )
             )
@@ -144,18 +177,16 @@ class QuizzStatistics(TemplateView):
         kwargs["persons_answered_questions"] = persons_answered_questions
 
         persons_correct_questions = []
-        for person in group.persons.all():
+        for email in fetched_persons:
             answers = (
-                Answer.objects.filter(quizz_sending=quizz_sending)
-                .filter(person__email=person.email)
-                .all()
+                answer for answer in fetched_answers.values() if answer.email == email
             )
             nb_points = sum(
-                answer.question.nb_points(answer) for answer in answers
+                answer.nb_points for answer in answers
             )
             persons_correct_questions.append(
                 Statistics(
-                    text=person.email, value=nb_points, max_value=nb_questions
+                    text=email, value=nb_points, max_value=nb_questions
                 )
             )
         persons_correct_questions.sort(key=lambda p: p.text)
@@ -164,11 +195,7 @@ class QuizzStatistics(TemplateView):
         questions_status = []
         questions = quizz.questions.all()
         for question in questions:
-            answers = (
-                Answer.objects.filter(quizz_sending=quizz_sending)
-                .filter(question=question)
-                .all()
-            )
+            answers = quizz_sending.answers.filter(question=question).all()
             nb_points = sum(
                 answer.question.nb_points(answer) for answer in answers
             )
