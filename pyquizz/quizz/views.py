@@ -9,7 +9,9 @@ from django.views.generic import FormView, TemplateView
 from .forms import AnswerForm
 from .models import Answer, Group, Person, Question, Quizz, QuizzSending
 
-FetchedAnswer = namedtuple("FetchedAnswer", ["email", "nb_points", "question"])
+FetchedAnswer = namedtuple(
+    "FetchedAnswer", ["email", "nb_points", "question", "quizz_sending"]
+)
 FetchedQuestion = namedtuple(
     "FetchedQuestion", ["pk", "statement", "possible_answers"]
 )
@@ -80,6 +82,7 @@ class AnswerAQuestion(FormView):
                 email=answer.person.email,
                 nb_points=answer.question.nb_points(answer),
                 question=answer.question.pk,
+                quizz_sending=0,  # not used
             )
 
         fetched_questions = {}
@@ -180,6 +183,7 @@ class QuizzStatistics(TemplateView):
                 email=answer.person.email,
                 nb_points=answer.question.nb_points(answer),
                 question=answer.question.pk,
+                quizz_sending=0,  # not used
             )
 
         nb_questions = len(fetched_questions)
@@ -251,29 +255,47 @@ class StudentStatistics(TemplateView):
         if not person:
             messages.error(self.request, "Cet email est inconnu.")
             return kwargs
-        quizz_sending_id_values = (
-            Answer.objects.filter(person=person)
-            .values("quizz_sending_id")
-            .distinct()
-        )
+
+        fetched_answers = {}
+        quizz_sending_ids = set()
+        for answer in (
+            Answer.objects.select_related("person")
+            .select_related("question")
+            .select_related("quizz_sending")
+            .filter(person=person)
+            .all()
+        ):
+            if answer.question.pk not in fetched_answers:
+                fetched_answers[answer.question.pk] = []
+            fetched_answers[answer.question.pk].append(
+                FetchedAnswer(
+                    email=answer.person.email,
+                    nb_points=answer.question.nb_points(answer),
+                    question=answer.question.pk,
+                    quizz_sending=answer.quizz_sending.pk,
+                )
+            )
+            quizz_sending_ids.add(answer.quizz_sending.pk)
+
         quizz_sendings_status = {}
-        for value in quizz_sending_id_values:
-            quizz_sending = QuizzSending.objects.get(
-                pk=value["quizz_sending_id"]
+        for quizz_sending_pk in quizz_sending_ids:
+            # TODO merge request of each quizz_sending
+            quizz_sending = (
+                QuizzSending.objects.select_related("quizz")
+                .prefetch_related("quizz__questions")
+                .get(pk=quizz_sending_pk)
             )
             quizz_sendings_status[quizz_sending] = []
             total_points = 0
             max_total_points = 0
+
             for question in quizz_sending.quizz.questions.all():
                 answers = (
-                    Answer.objects.filter(quizz_sending=quizz_sending)
-                    .filter(question=question)
-                    .filter(person=person)
-                    .all()
+                    answer
+                    for answer in fetched_answers[question.pk]
+                    if answer.quizz_sending == quizz_sending_pk
                 )
-                nb_points = sum(
-                    answer.question.nb_points(answer) for answer in answers
-                )
+                nb_points = sum(answer.nb_points for answer in answers)
                 total_points += nb_points
                 max_total_points += 1
                 answers_text = "\n".join(
