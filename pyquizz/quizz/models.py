@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.utils.functional import cached_property
 
 
 class Person(models.Model):
@@ -107,12 +108,14 @@ class Question(models.Model):
     def get_absolute_url(self):
         return reverse("quizz_question_detail", args=[str(self.slug)])
 
+    @cached_property
     def possible_answers(self):
         answers = [answer.strip() for answer in str(self.answers).split("----")]
         if not self.auto_evaluation:
             answers.append("Sans opinion")
         return answers
 
+    @cached_property
     def correct_answers_text(self):
         correct_answers = [
             int(num) for num in str(self.correct_answers).split(",")
@@ -211,11 +214,11 @@ class QuizzSending(models.Model):
     def __hash__(self):
         return hash(("QuizzSending", self.date_for_url))
 
-    @property
+    @cached_property
     def hash(self):
         return hex(abs(hash(self)))
 
-    @property
+    @cached_property
     def date_for_url(self):
         return self.date.strftime("%Y-%m-%d--%H-%M")
 
@@ -274,11 +277,13 @@ class Answer(models.Model):
     def get_absolute_url(self):
         return reverse("quizz_answer_detail", args=[str(self.pk)])
 
+    @cached_property
     def chosen_answers(self):
         if self.answers:
             return str(self.answers).split(",")
         return []
 
+    @cached_property
     def chosen_answers_textual(self):
         possible_answers = self.question.possible_answers()
         return [possible_answers[int(index)] for index in self.chosen_answers()]

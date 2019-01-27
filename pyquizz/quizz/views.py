@@ -90,7 +90,7 @@ class AnswerAQuestion(FormView):
             fetched_questions[question.pk] = FetchedQuestion(
                 pk=question.pk,
                 statement=question.statement,
-                possible_answers="\n".join(question.possible_answers()),
+                possible_answers="\n".join(question.possible_answers),
             )
 
         unanswered_questions = []
@@ -172,7 +172,7 @@ class QuizzStatistics(TemplateView):
             fetched_questions[question.pk] = FetchedQuestion(
                 pk=question.pk,
                 statement=question.statement,
-                possible_answers="\n".join(question.possible_answers()),
+                possible_answers="\n".join(question.possible_answers),
             )
         fetched_persons = {}
         for person in group.persons.all():
