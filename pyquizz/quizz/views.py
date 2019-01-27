@@ -282,7 +282,7 @@ class StudentStatistics(TemplateView):
             quizz_sending_ids.add(answer.quizz_sending.pk)
 
         quizz_sendings_status = {}
-        for quizz_sending_pk in quizz_sending_ids:
+        for quizz_sending_pk in sorted(quizz_sending_ids, reverse=True):
             # TODO merge request of each quizz_sending
             quizz_sending = (
                 QuizzSending.objects.select_related("quizz")
