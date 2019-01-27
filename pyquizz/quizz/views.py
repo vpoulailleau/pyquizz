@@ -80,7 +80,7 @@ class AnswerAQuestion(FormView):
         for answer in answers_from_email.all():
             fetched_answers[answer.pk] = FetchedAnswer(
                 email=answer.person.email,
-                nb_points=answer.question.nb_points(answer),
+                nb_points=answer.nb_points,
                 question=answer.question.pk,
                 quizz_sending=0,  # not used
             )
@@ -181,7 +181,7 @@ class QuizzStatistics(TemplateView):
         for answer in quizz_sending.answers.all():
             fetched_answers[answer.pk] = FetchedAnswer(
                 email=answer.person.email,
-                nb_points=answer.question.nb_points(answer),
+                nb_points=answer.nb_points,
                 question=answer.question.pk,
                 quizz_sending=0,  # not used
             )
@@ -270,7 +270,7 @@ class StudentStatistics(TemplateView):
             fetched_answers[answer.question.pk].append(
                 FetchedAnswer(
                     email=answer.person.email,
-                    nb_points=answer.question.nb_points(answer),
+                    nb_points=answer.nb_points,
                     question=answer.question.pk,
                     quizz_sending=answer.quizz_sending.pk,
                 )
