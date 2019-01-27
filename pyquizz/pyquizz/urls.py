@@ -19,9 +19,9 @@ urlpatterns = [
         RedirectView.as_view(url="/static/pyquizz/apple-touch-icon.png"),
     ),
     path(
-        "apple-touch-icon-precomposed.ico",
+        "apple-touch-icon-precomposed.png",
         RedirectView.as_view(
-            url="/static/pyquizz/apple-touch-icon-precomposed.ico"
+            url="/static/pyquizz/apple-touch-icon-precomposed.png"
         ),
     ),
 ]
