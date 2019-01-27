@@ -285,8 +285,8 @@ class Answer(models.Model):
 
     @cached_property
     def chosen_answers_textual(self):
-        possible_answers = self.question.possible_answers()
-        return [possible_answers[int(index)] for index in self.chosen_answers()]
+        possible_answers = self.question.possible_answers
+        return [possible_answers[int(index)] for index in self.chosen_answers]
 
     @cached_property
     def nb_points(self):

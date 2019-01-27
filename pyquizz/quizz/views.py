@@ -10,7 +10,8 @@ from .forms import AnswerForm
 from .models import Answer, Group, Person, Question, Quizz, QuizzSending
 
 FetchedAnswer = namedtuple(
-    "FetchedAnswer", ["email", "nb_points", "question", "quizz_sending"]
+    "FetchedAnswer",
+    ["email", "nb_points", "question", "quizz_sending", "chosen_answers"],
 )
 FetchedQuestion = namedtuple(
     "FetchedQuestion", ["pk", "statement", "possible_answers"]
@@ -83,6 +84,7 @@ class AnswerAQuestion(FormView):
                 nb_points=answer.nb_points,
                 question=answer.question.pk,
                 quizz_sending=0,  # not used
+                chosen_answers="",  # not used
             )
 
         fetched_questions = {}
@@ -184,6 +186,7 @@ class QuizzStatistics(TemplateView):
                 nb_points=answer.nb_points,
                 question=answer.question.pk,
                 quizz_sending=0,  # not used
+                chosen_answers="",  # not used
             )
 
         nb_questions = len(fetched_questions)
@@ -273,6 +276,7 @@ class StudentStatistics(TemplateView):
                     nb_points=answer.nb_points,
                     question=answer.question.pk,
                     quizz_sending=answer.quizz_sending.pk,
+                    chosen_answers="\n".join(answer.chosen_answers_textual),
                 )
             )
             quizz_sending_ids.add(answer.quizz_sending.pk)
@@ -290,17 +294,16 @@ class StudentStatistics(TemplateView):
             max_total_points = 0
 
             for question in quizz_sending.quizz.questions.all():
-                answers = (
+                answers = [
                     answer
-                    for answer in fetched_answers[question.pk]
+                    for answer in fetched_answers.get(question.pk, [])
                     if answer.quizz_sending == quizz_sending_pk
-                )
+                ]
                 nb_points = sum(answer.nb_points for answer in answers)
                 total_points += nb_points
                 max_total_points += 1
                 answers_text = "\n".join(
-                    "\n".join(answer.chosen_answers_textual())
-                    for answer in answers
+                    answer.chosen_answers for answer in answers
                 )
                 quizz_sendings_status[quizz_sending].append(
                     Statistics(
