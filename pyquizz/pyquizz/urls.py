@@ -11,6 +11,19 @@ urlpatterns = [
     path(
         "favicon.png", RedirectView.as_view(url="/static/pyquizz/favicon.png")
     ),
+    path(
+        "favicon.ico", RedirectView.as_view(url="/static/pyquizz/favicon.ico")
+    ),
+    path(
+        "apple-touch-icon.png",
+        RedirectView.as_view(url="/static/pyquizz/apple-touch-icon.png"),
+    ),
+    path(
+        "apple-touch-icon-precomposed.ico",
+        RedirectView.as_view(
+            url="/static/pyquizz/apple-touch-icon-precomposed.ico"
+        ),
+    ),
 ]
 
 if settings.DEBUG:
