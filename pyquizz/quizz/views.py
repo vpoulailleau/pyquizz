@@ -67,6 +67,7 @@ class AnswerAQuestion(FormView):
             messages.error(
                 self.request, "Pas de quizz correspondant à cette date"
             )
+            kwargs["finished"] = False
             kwargs["nb_questions_left"] = 0
             return kwargs
         answers_from_email = (
