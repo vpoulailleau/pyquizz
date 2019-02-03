@@ -89,3 +89,4 @@ class AnswerAdmin(admin.ModelAdmin):
         "answers_display",
         "quizz_sending",
     )
+    search_fields = ("person__email", "quizz_sending__quizz__name")
