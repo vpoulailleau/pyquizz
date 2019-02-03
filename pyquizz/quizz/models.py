@@ -120,7 +120,7 @@ class Question(models.Model):
         correct_answers = [
             int(num) for num in str(self.correct_answers).split(",")
         ]
-        possible_answers = self.possible_answers()
+        possible_answers = self.possible_answers
         return [possible_answers[i] for i in correct_answers]
 
     def nb_points(self, answer):
