@@ -29,6 +29,7 @@ def init_group(name, emails):
 
     group.persons.add(*persons)
 
+
 def create_quizz(quizz_name):
     slug = slugify(quizz_name)[:150]
     try:
@@ -54,6 +55,7 @@ def create_question(quizz, question, answers, good_answers):
 
 def create_autoevaluation(quizz_name, questions):
     quizz = create_quizz(quizz_name)
+    quizz.random_question_order = False
 
     question_list = []
     for question in questions:
@@ -74,3 +76,4 @@ def create_autoevaluation(quizz_name, questions):
         question_list.append(question)
 
     quizz.questions.add(*question_list)
+    quizz.save()
