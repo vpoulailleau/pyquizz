@@ -132,7 +132,17 @@ class Question(models.Model):
             # consider that the user knows at least the subject
             return ret / 2
         else:
-            return int(answer.answers == self.correct_answers)
+            points = 1.0
+            correct_answers = self.correct_answers.split(',')
+            answers = answer.answers.split(',')
+            for answer in correct_answers:
+                if answer not in answers:
+                    points -= 0.5
+            for answer in answers:
+                if answer not in correct_answers:
+                    points -= 0.5
+            return max(0, points)
+
 
 
 class Quizz(models.Model):
