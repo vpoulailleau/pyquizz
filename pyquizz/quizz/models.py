@@ -318,7 +318,7 @@ class ReviewAnswer(models.Model):
         blank=True,
         unique=False,  # multiple answers
         verbose_name="Adresse email",
-        help_text="Adresse email",
+        help_text="Adresse email (facultative)",
     )
     easiest = models.TextField(
         null=False,

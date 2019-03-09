@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ review }}{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <form action="{% url 'review_form' review=review %}" method="POST">
+        {% csrf_token %}
+        <input id="review" name="review" type="hidden" value="{{ review }}">
+        <table class="table table-striped table-hover">
+        {{ form.as_table }}
+        </table>
+        <button type="submit" class="btn btn-success">Envoyer</button>
+        <button type="reset" class="btn btn-danger">Annuler</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,7 +1,15 @@
 from django.contrib import admin
 from django.utils.html import format_html, format_html_join
 
-from .models import Answer, Group, Person, Question, Quizz, QuizzSending
+from .models import (
+    Answer,
+    Group,
+    Person,
+    Question,
+    Quizz,
+    QuizzSending,
+    ReviewAnswer,
+)
 
 
 def format_list(generator):
@@ -90,3 +98,9 @@ class AnswerAdmin(admin.ModelAdmin):
         "quizz_sending",
     )
     search_fields = ("person__email", "quizz_sending__quizz__name")
+
+
+@admin.register(ReviewAnswer)
+class ReviewAnswerAdmin(admin.ModelAdmin):
+    search_fields = ("review", "email")
+    list_display = ("review", "email")

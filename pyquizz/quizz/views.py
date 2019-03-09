@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.urls import reverse
 from django.views.generic import FormView, TemplateView
 
-from .forms import AnswerForm
+from .forms import AnswerForm, ReviewForm
 from .models import Answer, Group, Person, Question, Quizz, QuizzSending
 
 FetchedAnswer = namedtuple(
@@ -337,3 +337,35 @@ class QuizzStatisticsList(TemplateView):
         )
         kwargs["quizz_sendings"] = quizz_sendings
         return kwargs
+
+
+class ReviewAnswer(FormView):
+    template_name = "quizz/answer_review.html"
+    form_class = ReviewForm
+    success_url = '/thanks/'
+
+
+    def get(self, request, *args, **kwargs):
+        self.review = kwargs["review"]
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.review = kwargs["review"]
+        return super().post(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
+        kwargs['review'] = self.review
+        return kwargs
+
+    def form_valid(self, form):
+        answer = form.save(commit=False)
+        answer.review = self.review
+        answer.save()
+        return super().form_valid(form)
+
+class Review(TemplateView):
+    pass
+
+class ReviewList(TemplateView):
+    pass

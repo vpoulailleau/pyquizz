@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Answer, Person, Question, QuizzSending
+from .models import Answer, Person, Question, QuizzSending, ReviewAnswer
 
 
 class AnswerForm(forms.Form):
@@ -54,7 +54,9 @@ class AnswerForm(forms.Form):
             raise forms.ValidationError("Aucune réponse n'a été fournie.")
         already_given_answers = (
             Answer.objects.filter(quizz_sending=quizz_sending)
-            .filter(person=Person.objects.get(email=self.cleaned_data["email"]))
+            .filter(
+                person=Person.objects.get(email=self.cleaned_data["email"])
+            )
             .filter(
                 question=Question.objects.get(pk=self.cleaned_data["question"])
             )
@@ -85,3 +87,9 @@ class AnswerForm(forms.Form):
             answers=answers,
         )
         answer.save()
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = ReviewAnswer
+        exclude = ["review"]
