@@ -81,7 +81,7 @@ urlpatterns = [
     path(
         "review/<review_type:review>/answers/",
         Review.as_view(),
-        name="review_list",
+        name="review_answer",
     ),
     path("<email:email>/<date:date>/", AnswerAQuestion.as_view(), name="form"),
     path(

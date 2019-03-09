@@ -389,7 +389,7 @@ class ReviewAnswer(models.Model):
         blank=True,
         unique=False,
         verbose_name="Suggestions d'amélioration",
-        help_text="Propositions améliorer le cours",
+        help_text="Propositions pour améliorer le cours",
         max_length=1000,
     )
     teacher_appreciation = models.TextField(

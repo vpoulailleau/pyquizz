@@ -2,6 +2,7 @@ import random
 from collections import namedtuple
 
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse
 from django.urls import reverse
 from django.views.generic import FormView, TemplateView
@@ -340,10 +341,10 @@ class QuizzStatisticsList(TemplateView):
         return kwargs
 
 
-class ReviewAnswer(FormView):
+class ReviewAnswer(SuccessMessageMixin, FormView):
     template_name = "quizz/answer_review.html"
     form_class = ReviewForm
-    success_url = '/thanks/'
+    success_message = "Merci pour tes réponses."
 
     def get(self, request, *args, **kwargs):
         self.review = kwargs["review"]
@@ -363,6 +364,12 @@ class ReviewAnswer(FormView):
         answer.review = self.review
         answer.save()
         return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse(
+            "review_answer", kwargs={"review": self.review}
+        )
+
 
 
 class Review(TemplateView):
