@@ -5,6 +5,11 @@
 
 {% block content %}
 <div class="container">
+    <h1>Bilan de l'année</h1>
+    <p>Ce questionnaire peut être anonyme ou non, libre à vous de donner votre email habituel ou pas d'email.</p>
+    <p>Répondez honnêtement, pas de tabou.</p>
+    <p>Vous pouvez répondre plusieurs fois à ce questionnaire, pensez à remettre le même email que précédemment.</p>
+    <p>Le but est de pouvoir m'améliorer pour les prochains cours.</p>
     <form action="{% url 'review_form' review=review %}" method="POST">
         {% csrf_token %}
         <input id="review" name="review" type="hidden" value="{{ review }}">
