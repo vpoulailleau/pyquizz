@@ -8,6 +8,7 @@ from django.views.generic import FormView, TemplateView
 
 from .forms import AnswerForm, ReviewForm
 from .models import Answer, Group, Person, Question, Quizz, QuizzSending
+from .models import ReviewAnswer as ReviewAnswerModel
 
 FetchedAnswer = namedtuple(
     "FetchedAnswer",
@@ -344,7 +345,6 @@ class ReviewAnswer(FormView):
     form_class = ReviewForm
     success_url = '/thanks/'
 
-
     def get(self, request, *args, **kwargs):
         self.review = kwargs["review"]
         return super().get(request, *args, **kwargs)
@@ -364,8 +364,23 @@ class ReviewAnswer(FormView):
         answer.save()
         return super().form_valid(form)
 
+
 class Review(TemplateView):
-    pass
+    template_name = "quizz/review.html"
+
+    def get(self, request, *args, **kwargs):
+        self.review = kwargs["review"]
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
+        kwargs['review'] = self.review
+        kwargs['answers'] = (
+            ReviewAnswerModel.objects
+            .filter(review=self.review)
+        )
+        return kwargs
+
 
 class ReviewList(TemplateView):
     pass
