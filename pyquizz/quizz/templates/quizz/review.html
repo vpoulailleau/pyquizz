@@ -17,7 +17,7 @@
                     <ul class="card-text">
                         {% for answer in answers %}
                             {% for line in answer.easiest.splitlines %}
-                                <li>{{ line }}</li>
+                                <li>{% if answer.email %}<span class="btn btn-outline-success btn-sm">{{ answer.email }}</span> {% endif %}{{ line }}</li>
                             {% endfor %}
                         {% endfor %}
                     </ul>
@@ -31,7 +31,7 @@
                     <ul class="card-text">
                         {% for answer in answers %}
                             {% for line in answer.hardest.splitlines %}
-                                <li>{{ line }}</li>
+                                <li>{% if answer.email %}<span class="btn btn-outline-success btn-sm">{{ answer.email }}</span> {% endif %}{{ line }}</li>
                             {% endfor %}
                         {% endfor %}
                     </ul>
@@ -48,7 +48,7 @@
                     <ul class="card-text">
                         {% for answer in answers %}
                             {% for line in answer.funniest.splitlines %}
-                                <li>{{ line }}</li>
+                                <li>{% if answer.email %}<span class="btn btn-outline-success btn-sm">{{ answer.email }}</span> {% endif %}{{ line }}</li>
                             {% endfor %}
                         {% endfor %}
                     </ul>
@@ -62,7 +62,7 @@
                     <ul class="card-text">
                         {% for answer in answers %}
                             {% for line in answer.most_boring.splitlines %}
-                                <li>{{ line }}</li>
+                                <li>{% if answer.email %}<span class="btn btn-outline-success btn-sm">{{ answer.email }}</span> {% endif %}{{ line }}</li>
                             {% endfor %}
                         {% endfor %}
                     </ul>
@@ -79,7 +79,7 @@
                     <ul class="card-text">
                         {% for answer in answers %}
                             {% for line in answer.most_original.splitlines %}
-                                <li>{{ line }}</li>
+                                <li>{% if answer.email %}<span class="btn btn-outline-success btn-sm">{{ answer.email }}</span> {% endif %}{{ line }}</li>
                             {% endfor %}
                         {% endfor %}
                     </ul>
@@ -93,7 +93,7 @@
                     <ul class="card-text">
                         {% for answer in answers %}
                             {% for line in answer.most_regrettable.splitlines %}
-                                <li>{{ line }}</li>
+                                <li>{% if answer.email %}<span class="btn btn-outline-success btn-sm">{{ answer.email }}</span> {% endif %}{{ line }}</li>
                             {% endfor %}
                         {% endfor %}
                     </ul>
@@ -110,7 +110,7 @@
                     <ul class="card-text">
                         {% for answer in answers %}
                             {% for line in answer.most_interesting.splitlines %}
-                                <li>{{ line }}</li>
+                                <li>{% if answer.email %}<span class="btn btn-outline-success btn-sm">{{ answer.email }}</span> {% endif %}{{ line }}</li>
                             {% endfor %}
                         {% endfor %}
                     </ul>
@@ -124,7 +124,7 @@
                     <ul class="card-text">
                         {% for answer in answers %}
                             {% for line in answer.least_interesting.splitlines %}
-                                <li>{{ line }}</li>
+                                <li>{% if answer.email %}<span class="btn btn-outline-success btn-sm">{{ answer.email }}</span> {% endif %}{{ line }}</li>
                             {% endfor %}
                         {% endfor %}
                     </ul>
@@ -141,7 +141,7 @@
                     <ul class="card-text">
                         {% for answer in answers %}
                             {% for line in answer.suggestions.splitlines %}
-                                <li>{{ line }}</li>
+                                <li>{% if answer.email %}<span class="btn btn-outline-success btn-sm">{{ answer.email }}</span> {% endif %}{{ line }}</li>
                             {% endfor %}
                         {% endfor %}
                     </ul>
