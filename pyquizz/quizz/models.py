@@ -110,7 +110,9 @@ class Question(models.Model):
 
     @cached_property
     def possible_answers(self):
-        answers = [answer.strip() for answer in str(self.answers).split("----")]
+        answers = [
+            answer.strip() for answer in str(self.answers).split("----")
+        ]
         if not self.auto_evaluation:
             answers.append("Sans opinion")
         return answers
@@ -133,8 +135,8 @@ class Question(models.Model):
             return ret / 2
         else:
             points = 1.0
-            correct_answers = self.correct_answers.split(',')
-            answers = answer.answers.split(',')
+            correct_answers = self.correct_answers.split(",")
+            answers = answer.answers.split(",")
             for answer in correct_answers:
                 if answer not in answers:
                     points -= 0.5
@@ -142,7 +144,6 @@ class Question(models.Model):
                 if answer not in correct_answers:
                     points -= 0.5
             return max(0, points)
-
 
 
 class Quizz(models.Model):
@@ -301,3 +302,98 @@ class Answer(models.Model):
     @cached_property
     def nb_points(self):
         return self.question.nb_points(self)
+
+
+class ReviewAnswer(models.Model):
+    review = models.CharField(
+        null=False,
+        blank=False,
+        unique=False,
+        verbose_name="Nom du bilan",
+        help_text="Nom du bilan, doit pouvoir faire partie d'une URL",
+        max_length=20,
+    )
+    email = models.EmailField(
+        null=False,
+        blank=True,
+        unique=False,  # multiple answers
+        verbose_name="Adresse email",
+        help_text="Adresse email",
+    )
+    easiest = models.TextField(
+        null=False,
+        blank=True,
+        unique=False,
+        verbose_name="Le plus facile",
+        help_text="Cette année, le plus facile a été",
+        max_length=1000,
+    )
+    hardest = models.TextField(
+        null=False,
+        blank=True,
+        unique=False,
+        verbose_name="Le plus difficile",
+        help_text="Cette année, le plus difficile a été",
+        max_length=1000,
+    )
+    funniest = models.TextField(
+        null=False,
+        blank=True,
+        unique=False,
+        verbose_name="Le plus amusant",
+        help_text="Cette année, le plus amusant a été",
+        max_length=1000,
+    )
+    most_boring = models.TextField(
+        null=False,
+        blank=True,
+        unique=False,
+        verbose_name="Le plus ennuyant",
+        help_text="Cette année, le plus ennuyant a été",
+        max_length=1000,
+    )
+    most_regrettable = models.TextField(
+        null=False,
+        blank=True,
+        unique=False,
+        verbose_name="Le plus regrettable",
+        help_text="Cette année, le plus regrettable a été",
+        max_length=1000,
+    )
+    most_original = models.TextField(
+        null=False,
+        blank=True,
+        unique=False,
+        verbose_name="Le plus original",
+        help_text="Cette année, le plus original a été",
+        max_length=1000,
+    )
+    most_interesting = models.TextField(
+        null=False,
+        blank=True,
+        unique=False,
+        verbose_name="Le plus intéressant",
+        help_text="Cette année, le plus intéressant a été",
+        max_length=1000,
+    )
+    least_interesting = models.TextField(
+        null=False,
+        blank=True,
+        unique=False,
+        verbose_name="Le moins intéressant",
+        help_text="Cette année, le moins intéressant a été",
+        max_length=1000,
+    )
+    suggestions = models.TextField(
+        null=False,
+        blank=True,
+        unique=False,
+        verbose_name="Suggestions d'amélioration",
+        help_text="Propositions améliorer le cours",
+        max_length=1000,
+    )
+
+    class Meta:
+        ordering = ["review", "email", "pk"]
+        verbose_name = "Réponse à un bilan"
+        verbose_name_plural = "Réponses à un bilan"
