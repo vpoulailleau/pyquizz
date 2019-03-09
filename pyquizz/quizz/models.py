@@ -392,6 +392,14 @@ class ReviewAnswer(models.Model):
         help_text="Propositions améliorer le cours",
         max_length=1000,
     )
+    teacher_appreciation = models.TextField(
+        null=False,
+        blank=True,
+        unique=False,
+        verbose_name="Remarques sur le prof",
+        help_text="Remarques et appréciations sur le prof",
+        max_length=1000,
+    )
 
     class Meta:
         ordering = ["review", "email", "pk"]

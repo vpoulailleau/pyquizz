@@ -134,13 +134,27 @@
     </div>
     
     <div class="row">
-        <div class="col-sm-12 py-5">
+        <div class="col-sm-6 py-5">
             <div class="card bg-light border-success">
                 <h2 class="card-header">Idées d'amélioration</h2>
                 <div class="card-body">
                     <ul class="card-text">
                         {% for answer in answers %}
                             {% for line in answer.suggestions.splitlines %}
+                                <li>{% if answer.email %}<span class="btn btn-outline-success btn-sm">{{ answer.email }}</span> {% endif %}{{ line }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 py-5">
+            <div class="card bg-light border-success">
+                <h2 class="card-header">Remarques sur le prof</h2>
+                <div class="card-body">
+                    <ul class="card-text">
+                        {% for answer in answers %}
+                            {% for line in answer.teacher_appreciation.splitlines %}
                                 <li>{% if answer.email %}<span class="btn btn-outline-success btn-sm">{{ answer.email }}</span> {% endif %}{{ line }}</li>
                             {% endfor %}
                         {% endfor %}
