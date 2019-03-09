@@ -344,7 +344,7 @@ class QuizzStatisticsList(TemplateView):
 class ReviewAnswer(SuccessMessageMixin, FormView):
     template_name = "quizz/answer_review.html"
     form_class = ReviewForm
-    success_message = "Merci pour tes réponses."
+    success_message = "Merci pour tes réponses. Tu peux éventuellement en ajouter d'autres."
 
     def get(self, request, *args, **kwargs):
         self.review = kwargs["review"]
