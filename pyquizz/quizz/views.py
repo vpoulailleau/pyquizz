@@ -3,12 +3,11 @@ from collections import namedtuple
 
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpResponse
 from django.urls import reverse
 from django.views.generic import FormView, TemplateView
 
 from .forms import AnswerForm, ReviewForm
-from .models import Answer, Group, Person, Question, Quizz, QuizzSending
+from .models import Answer, Person, Question, QuizzSending
 from .models import ReviewAnswer as ReviewAnswerModel
 
 FetchedAnswer = namedtuple(
@@ -252,6 +251,85 @@ class QuizzStatistics(TemplateView):
         return kwargs
 
 
+class QuizzStatisticsCSV(TemplateView):
+    template_name = "quizz/statistics.csv"
+
+    @staticmethod
+    def is_ynov_group(group):
+        for person in group.persons.all():
+            if not person.email.endswith("@ynov.com"):
+                return False
+        return True
+
+    @staticmethod
+    def ynovmail2name(ynov: bool, email):
+        if ynov:
+            name = email.split("@")[0]
+            first_name, last_name = name.split(".")
+            return f"{last_name} {first_name}"
+        return email
+
+    def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
+        quizz_sending = (
+            QuizzSending.objects.filter(date=kwargs["date"])
+            .select_related("quizz")
+            .select_related("group")
+            .prefetch_related("quizz__questions")
+            .prefetch_related("group__persons")
+            .prefetch_related("answers")
+            .prefetch_related("answers__person")
+            .prefetch_related("answers__question")
+            .first()
+        )
+        if not quizz_sending:
+            messages.error(
+                self.request, "Pas de quizz correspondant à cette date"
+            )
+            kwargs["quizz_sending"] = None
+            return kwargs
+        quizz = quizz_sending.quizz
+        group = quizz_sending.group
+
+        fetched_persons = {}
+        for person in group.persons.all():
+            fetched_persons[person.email] = FetchedPerson(email=person.email)
+        fetched_answers = {}
+        for answer in quizz_sending.answers.all():
+            fetched_answers[answer.pk] = FetchedAnswer(
+                email=answer.person.email,
+                nb_points=answer.nb_points,
+                question=answer.question.pk,
+                quizz_sending=0,  # not used
+                chosen_answers="",  # not used
+            )
+
+        nb_questions = len(quizz.questions.all())
+        kwargs["nb_questions"] = nb_questions
+        len(fetched_persons)
+        kwargs["quizz_sending"] = quizz_sending
+
+        ynov_group = self.is_ynov_group(group)
+        persons_correct_questions = []
+        for email in fetched_persons:
+            answers = (
+                answer
+                for answer in fetched_answers.values()
+                if answer.email == email
+            )
+            nb_points = sum(answer.nb_points for answer in answers)
+            persons_correct_questions.append(
+                Statistics(
+                    text=self.ynovmail2name(ynov_group, email),
+                    value=nb_points,
+                    max_value=nb_questions,
+                )
+            )
+        persons_correct_questions.sort(key=lambda p: p.text)
+        kwargs["persons_correct_questions"] = persons_correct_questions
+        return kwargs
+
+
 class StudentStatistics(TemplateView):
     template_name = "quizz/student_statistics.html"
 
@@ -344,7 +422,9 @@ class QuizzStatisticsList(TemplateView):
 class ReviewAnswer(SuccessMessageMixin, FormView):
     template_name = "quizz/answer_review.html"
     form_class = ReviewForm
-    success_message = "Merci pour tes réponses. Tu peux éventuellement en ajouter d'autres."
+    success_message = (
+        "Merci pour tes réponses. Tu peux éventuellement en ajouter d'autres."
+    )
 
     def get(self, request, *args, **kwargs):
         self.review = kwargs["review"]
@@ -356,7 +436,7 @@ class ReviewAnswer(SuccessMessageMixin, FormView):
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
-        kwargs['review'] = self.review
+        kwargs["review"] = self.review
         return kwargs
 
     def form_valid(self, form):
@@ -366,10 +446,7 @@ class ReviewAnswer(SuccessMessageMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse(
-            "review_answer", kwargs={"review": self.review}
-        )
-
+        return reverse("review_answer", kwargs={"review": self.review})
 
 
 class Review(TemplateView):
@@ -381,10 +458,9 @@ class Review(TemplateView):
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
-        kwargs['review'] = self.review
-        kwargs['answers'] = (
-            ReviewAnswerModel.objects
-            .filter(review=self.review)
+        kwargs["review"] = self.review
+        kwargs["answers"] = ReviewAnswerModel.objects.filter(
+            review=self.review
         )
         return kwargs
 

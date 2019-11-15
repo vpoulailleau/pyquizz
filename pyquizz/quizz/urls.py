@@ -6,6 +6,7 @@ from django.urls import path, register_converter
 from quizz.views import (
     AnswerAQuestion,
     QuizzStatistics,
+    QuizzStatisticsCSV,
     QuizzStatisticsList,
     Review,
     ReviewAnswer,
@@ -88,6 +89,11 @@ urlpatterns = [
         "<email:email>/",
         StudentStatistics.as_view(),
         name="student_statistics",
+    ),
+    path(
+        "statistiques/<date:date>/csv",
+        QuizzStatisticsCSV.as_view(content_type="text/plain"),
+        name="quizz_statistics_csv",
     ),
     path(
         "statistiques/<date:date>/",

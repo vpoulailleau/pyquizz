@@ -1,0 +1,3 @@
+Nom ; Note ; NbQuestions={{ nb_questions }}
+{% for person in persons_correct_questions %}{{ person.text|title }} ; {{ person.progress.note }}
+{% endfor %}
