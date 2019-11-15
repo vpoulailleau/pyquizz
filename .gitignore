@@ -1,5 +1,5 @@
 # personal information
-init_groups.py
+init_groups*.py
 # to avoid answers in repo
 init_quiz_*.py
 
