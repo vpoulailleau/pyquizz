@@ -93,8 +93,8 @@ class AnswerAQuestion(FormView):
         for question in quizz.questions.all():
             fetched_questions[question.pk] = FetchedQuestion(
                 pk=question.pk,
-                statement=question.statement,
-                possible_answers="\n".join(question.possible_answers),
+                statement=question.statement_html,
+                possible_answers="\n".join(question.possible_answers_html),
             )
 
         unanswered_questions = []
@@ -175,8 +175,8 @@ class QuizzStatistics(TemplateView):
         for question in quizz.questions.all():
             fetched_questions[question.pk] = FetchedQuestion(
                 pk=question.pk,
-                statement=question.statement,
-                possible_answers="\n".join(question.possible_answers),
+                statement=question.statement_html,
+                possible_answers="\n".join(question.possible_answers_html),
             )
         fetched_persons = {}
         for person in group.persons.all():
@@ -357,7 +357,7 @@ class StudentStatistics(TemplateView):
                     nb_points=answer.nb_points,
                     question=answer.question.pk,
                     quizz_sending=answer.quizz_sending.pk,
-                    chosen_answers="\n".join(answer.chosen_answers_textual),
+                    chosen_answers="\n".join(answer.chosen_answers_textual),  # TODO md2html
                 )
             )
             quizz_sending_ids.add(answer.quizz_sending.pk)
@@ -388,7 +388,7 @@ class StudentStatistics(TemplateView):
                 )
                 quizz_sendings_status[quizz_sending].append(
                     Statistics(
-                        text=str(question.statement),
+                        text=question.statement_html,
                         value=nb_points,
                         max_value=1,
                         extra_text=answers_text,

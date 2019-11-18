@@ -1,6 +1,9 @@
+import re
+
 from django.db import models
 from django.urls import reverse
 from django.utils.functional import cached_property
+from django.utils.safestring import mark_safe
 
 
 class Person(models.Model):
@@ -108,6 +111,18 @@ class Question(models.Model):
     def get_absolute_url(self):
         return reverse("quizz_question_detail", args=[str(self.slug)])
 
+    @staticmethod
+    def md2html(text):
+        text = text.replace("<", "&lt;")
+        text = text.replace("&lt;sub>", "<sub>").replace("&lt;/sub>", "</sub>")
+        text = text.replace("&lt;sup>", "<sup>").replace("&lt;/sup>", "</sup>")
+        text = re.sub(r"`(.*?)`", r"<code>\1</code>", text)
+        return mark_safe(text)
+
+    @cached_property
+    def statement_html(self):
+        return self.md2html(self.statement)
+
     @cached_property
     def possible_answers(self):
         answers = [
@@ -118,12 +133,20 @@ class Question(models.Model):
         return answers
 
     @cached_property
+    def possible_answers_html(self):
+        return [self.md2html(a) for a in self.possible_answers]
+
+    @cached_property
     def correct_answers_text(self):
         correct_answers = [
             int(num) for num in str(self.correct_answers).split(",")
         ]
         possible_answers = self.possible_answers
         return [possible_answers[i] for i in correct_answers]
+
+    @cached_property
+    def correct_answers_html(self):
+        return [self.md2html(a) for a in self.correct_answers_text]
 
     def nb_points(self, answer):
         if self.auto_evaluation:

@@ -17,7 +17,7 @@
     </div>
     {% if nb_questions_left %}
     <div class="alert alert-primary" role="alert">
-        {{ question.statement }}
+        {{ question.statement_html }}
     </div>
     <form action="{% url 'form' email=email date=date_for_url %}" method="POST">
         {% csrf_token %}
@@ -25,7 +25,7 @@
         <input id="question" name="question" type="hidden" value="{{ question.pk }}">
         <input id="quizz_sending" name="quizz_sending" type="hidden" value="{{ quizz_sending.pk }}">
         <ul>
-            {% for possible_answer in question.possible_answers %}
+            {% for possible_answer in question.possible_answers_html %}
             <li><input id="answer{{ forloop.counter0 }}" name="answer{{ forloop.counter0 }}" type="checkbox">
                 {{ possible_answer }}</li>
             {% endfor %}

@@ -41,7 +41,7 @@
                         {{ question.text }}
                         <ul>
                         {% for answer in question.extra_text.splitlines %}
-                            <li>{{ answer }}</li>
+                            <li>{{ answer|safe }}</li>
                         {% endfor %}
                         </ul>
                     </td>
