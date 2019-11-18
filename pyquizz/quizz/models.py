@@ -5,6 +5,14 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 
+def md2html(text):
+    text = text.replace("<", "&lt;")
+    text = text.replace("&lt;sub>", "<sub>").replace("&lt;/sub>", "</sub>")
+    text = text.replace("&lt;sup>", "<sup>").replace("&lt;/sup>", "</sup>")
+    text = re.sub(r"`(.*?)`", r"<code>\1</code>", text)
+    return mark_safe(text)
+
+ 
 
 class Person(models.Model):
     email = models.EmailField(
@@ -111,17 +119,9 @@ class Question(models.Model):
     def get_absolute_url(self):
         return reverse("quizz_question_detail", args=[str(self.slug)])
 
-    @staticmethod
-    def md2html(text):
-        text = text.replace("<", "&lt;")
-        text = text.replace("&lt;sub>", "<sub>").replace("&lt;/sub>", "</sub>")
-        text = text.replace("&lt;sup>", "<sup>").replace("&lt;/sup>", "</sup>")
-        text = re.sub(r"`(.*?)`", r"<code>\1</code>", text)
-        return mark_safe(text)
-
     @cached_property
     def statement_html(self):
-        return self.md2html(self.statement)
+        return md2html(self.statement)
 
     @cached_property
     def possible_answers(self):
@@ -134,7 +134,7 @@ class Question(models.Model):
 
     @cached_property
     def possible_answers_html(self):
-        return [self.md2html(a) for a in self.possible_answers]
+        return [md2html(a) for a in self.possible_answers]
 
     @cached_property
     def correct_answers_text(self):
@@ -146,7 +146,7 @@ class Question(models.Model):
 
     @cached_property
     def correct_answers_html(self):
-        return [self.md2html(a) for a in self.correct_answers_text]
+        return [md2html(a) for a in self.correct_answers_text]
 
     def nb_points(self, answer):
         if self.auto_evaluation:
@@ -321,6 +321,11 @@ class Answer(models.Model):
     def chosen_answers_textual(self):
         possible_answers = self.question.possible_answers
         return [possible_answers[int(index)] for index in self.chosen_answers]
+
+    @cached_property
+    def chosen_answers_html(self):
+        possible_answers = self.question.possible_answers
+        return [md2html(possible_answers[int(index)]) for index in self.chosen_answers]
 
     @cached_property
     def nb_points(self):

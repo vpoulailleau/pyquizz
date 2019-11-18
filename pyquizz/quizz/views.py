@@ -357,7 +357,7 @@ class StudentStatistics(TemplateView):
                     nb_points=answer.nb_points,
                     question=answer.question.pk,
                     quizz_sending=answer.quizz_sending.pk,
-                    chosen_answers="\n".join(answer.chosen_answers_textual),  # TODO md2html
+                    chosen_answers="\n".join(answer.chosen_answers_html),
                 )
             )
             quizz_sending_ids.add(answer.quizz_sending.pk)
