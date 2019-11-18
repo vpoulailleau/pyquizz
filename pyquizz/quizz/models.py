@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 
+
 def md2html(text):
     text = text.replace("<", "&lt;")
     text = text.replace("&lt;sub>", "<sub>").replace("&lt;/sub>", "</sub>")
@@ -12,7 +13,6 @@ def md2html(text):
     text = re.sub(r"`(.*?)`", r"<code>\1</code>", text)
     return mark_safe(text)
 
- 
 
 class Person(models.Model):
     email = models.EmailField(
@@ -325,7 +325,10 @@ class Answer(models.Model):
     @cached_property
     def chosen_answers_html(self):
         possible_answers = self.question.possible_answers
-        return [md2html(possible_answers[int(index)]) for index in self.chosen_answers]
+        return [
+            md2html(possible_answers[int(index)])
+            for index in self.chosen_answers
+        ]
 
     @cached_property
     def nb_points(self):
