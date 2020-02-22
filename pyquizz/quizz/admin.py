@@ -69,6 +69,16 @@ class QuizzAdmin(admin.ModelAdmin):
 class QuizzSendingAdmin(admin.ModelAdmin):
     list_display = ("date", "quizz", "group")
 
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        nb_questions = 0
+        if obj is not None:
+            nb_questions = obj.quizz.nb_questions
+        form.base_fields[
+            "end_date"
+        ].help_text = f"{nb_questions} questions, temps estimé {nb_questions / 4} minutes"
+        return form
+
 
 @admin.register(Answer)
 class AnswerAdmin(admin.ModelAdmin):
