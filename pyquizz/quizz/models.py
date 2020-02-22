@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 
 from django.db import models
 from django.urls import reverse
@@ -236,6 +237,13 @@ class QuizzSending(models.Model):
         unique=True,
         verbose_name="date d'envoi du quizz",
         help_text="date d'envoi du quizz à un groupe",
+    )
+    end_date = models.DateTimeField(
+        null=False,
+        blank=False,
+        verbose_name="date de fin du quizz",
+        help_text="date de fin du quizz pour un groupe",
+        default=datetime(2100, 1, 1, 0, 0),
     )
 
     class Meta:
