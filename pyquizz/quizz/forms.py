@@ -1,4 +1,7 @@
+from datetime import datetime
+
 from django import forms
+from django.utils.timezone import get_fixed_timezone
 
 from .models import Answer, Person, Question, QuizzSending, ReviewAnswer
 
@@ -65,6 +68,9 @@ class AnswerForm(forms.Form):
             raise forms.ValidationError(
                 "Une réponse a déjà été fournie à la question précédente."
             )
+
+        if datetime.now(tz=get_fixed_timezone(1)) > quizz_sending.end_date:
+            raise forms.ValidationError("Ce quiz est maintenant terminé")
 
     def add_answer_in_database(self):
         quizz_sending = QuizzSending.objects.get(
