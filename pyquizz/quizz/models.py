@@ -203,7 +203,7 @@ class Quizz(models.Model):
         verbose_name_plural = "Quizzes"
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.nb_questions} questions, {self.nb_questions / 4} minutes)"
 
     def get_absolute_url(self):
         return reverse("quizz_quizz_detail", args=[str(self.slug)])
