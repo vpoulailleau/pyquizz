@@ -192,7 +192,7 @@ class QuizzStatistics(TemplateView):
             )
 
         nb_questions = quizz.nb_questions
-        nb_persons = len(fetched_persons)
+        nb_persons = quizz_sending.nb_persons
         kwargs["quizz_sending"] = quizz_sending
         kwargs["total_questions"] = Progress(
             value=len(fetched_answers), max_value=nb_questions * nb_persons

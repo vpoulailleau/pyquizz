@@ -260,6 +260,14 @@ class QuizzSending(models.Model):
     def date_for_url(self):
         return self.date.strftime("%Y-%m-%d--%H-%M")
 
+    @property
+    def nb_persons(self):
+        persons_queryset = self.answers.all()
+        emails = set()
+        for p in self.answers.all():
+            emails.add(p.person.email)
+        return max(1, len(emails))  # avoid division by 0
+
 
 class Answer(models.Model):
     quizz_sending = models.ForeignKey(
