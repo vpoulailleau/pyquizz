@@ -5,6 +5,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
+from django.utils.timezone import get_fixed_timezone
 
 
 def md2html(text):
@@ -243,7 +244,7 @@ class QuizzSending(models.Model):
         blank=False,
         verbose_name="date de fin du quizz",
         help_text="date de fin du quizz pour un groupe",
-        default=datetime(2100, 1, 1, 0, 0),
+        default=datetime(2100, 1, 1, 0, 0, tzinfo=get_fixed_timezone(1)),
     )
 
     class Meta:
