@@ -206,6 +206,10 @@ class Quizz(models.Model):
     def get_absolute_url(self):
         return reverse("quizz_quizz_detail", args=[str(self.slug)])
 
+    @cached_property
+    def nb_questions(self):
+        return self.questions.count()
+
 
 class QuizzSending(models.Model):
     quizz = models.ForeignKey(

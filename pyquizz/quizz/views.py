@@ -191,7 +191,7 @@ class QuizzStatistics(TemplateView):
                 chosen_answers="",  # not used
             )
 
-        nb_questions = len(fetched_questions)
+        nb_questions = quizz.nb_questions
         nb_persons = len(fetched_persons)
         kwargs["quizz_sending"] = quizz_sending
         kwargs["total_questions"] = Progress(
@@ -304,7 +304,7 @@ class QuizzStatisticsCSV(TemplateView):
                 chosen_answers="",  # not used
             )
 
-        nb_questions = len(quizz.questions.all())
+        nb_questions = quizz.nb_questions
         kwargs["nb_questions"] = nb_questions
         len(fetched_persons)
         kwargs["quizz_sending"] = quizz_sending
