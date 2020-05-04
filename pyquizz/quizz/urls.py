@@ -46,6 +46,7 @@ def review_list():
         "BTS-SN-2-2019",
         "B3-2019",
         "M1M2-2019",
+        "piscine-2020",
     ]
     for index, review in enumerate(reviews):
         review = review.replace("-", r"\-")
