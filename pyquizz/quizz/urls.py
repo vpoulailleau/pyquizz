@@ -40,14 +40,14 @@ class DateTimeConverter:
 def review_list():
     """Generate regex for reviews."""
     reviews = [
-        "B1a-2019",
-        "B1b-2019",
-        "BTS-SN-1-2019",
-        "BTS-SN-2-2019",
-        "B3-2019",
-        "M1M2-2019",
-        "piscine-2020",
-        "arinfo-2020",
+        "B1a-2021",
+        "B1b-2021",
+        "BTS-SN-1-2021",
+        "BTS-SN-2-2021",
+        "B3-2021",
+        "M1M2-2021",
+        "piscine-2021",
+        "arinfo-2021",
     ]
     for index, review in enumerate(reviews):
         review = review.replace("-", r"\-")
