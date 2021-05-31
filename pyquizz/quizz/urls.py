@@ -16,7 +16,7 @@ from quizz.views import (
 
 
 class EmailConverter:
-    regex = r"[\w.-]+@\w+\.\w+"
+    regex = r"[\w.-]+@[\w.-]+\.\w+"
 
     def to_python(self, value):
         return value
