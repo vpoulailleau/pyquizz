@@ -66,7 +66,7 @@ class AnswerAQuestion(FormView):
         )
         if not quizz_sending:
             messages.error(
-                self.request, "Pas de quizz correspondant à cette date"
+                self.request, "Pas de quiz correspondant à cette date"
             )
             kwargs["finished"] = False
             kwargs["nb_questions_left"] = 0
