@@ -127,7 +127,7 @@
         Détail
     </button>
     <div class="collapse" id="collapse_question">
-        <table class="table table-borderless table-striped">
+        <table class="table table-borderless table-sm">
             <thead>
                 <tr>
                     <th scope="col" class="w-50">Question</th>
@@ -136,17 +136,12 @@
             </thead>
             <tbody>
                 {% for question in questions %}
-                <tr scope="row">
-                    <td>
+                <tr scope="row" class="table-active mt-5">
+                    <td class="py-4 pl-3 align-middle">
                         {{ question.text }}
-                        <ul>
-                        {% for answer in question.extra_text.splitlines %}
-                            <li>{{ answer|safe }}</li>
-                        {% endfor %}
-                        </ul>
                     </td>
-                    <td>
-                        <div class="progress">
+                    <td class="py-4">
+                        <div class="progress" style="height: 3em">
                             <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
                                 style="width: {{ question.progress.percentage }}%;" aria-valuenow="{{ question.progress.value }}"
                                 aria-valuemin="0" aria-valuemax="{{ question.progress.max_value }}">
@@ -158,6 +153,24 @@
                         </div>
                     </td>
                 </tr>
+                {% with question_stat=questions_answers_stats|dict_key:question.text %}
+                {% for answer_stat in question_stat %}
+                <tr>
+
+                    <td class="pl-5">{{ answer_stat.text|safe }}</td>
+                    <td>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                style="width: {{ answer_stat.progress.percentage }}%;" aria-valuenow="{{ answer_stat.progress.value }}"
+                                aria-valuemin="0" aria-valuemax="{{ answer_stat.progress.max_value }}">
+                                {{ answer_stat.progress.percentage }}%
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endwith %}
+
                 {% endfor %}
             </tbody>
         </table>

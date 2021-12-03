@@ -1,10 +1,19 @@
 import random
 from collections import namedtuple
+from typing import List, Dict
 
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
 from django.views.generic import FormView, TemplateView
+from django.template.defaultfilters import register
+
+
+@register.filter(name="dict_key")
+def dict_key(d, k):
+    """Returns the given key from a dictionary."""
+    return d[k]
+
 
 from .forms import AnswerForm, ReviewForm
 from .models import Answer, Person, Question, QuizzSending
@@ -71,7 +80,7 @@ class AnswerAQuestion(FormView):
 
         quizz = quizz_sending.quizz
 
-        fetched_answers = {}
+        fetched_answers: Dict[int, FetchedAnswer] = {}
         for answer in answers_from_email.all():
             fetched_answers[answer.pk] = FetchedAnswer(
                 email=answer.person.email,
@@ -81,7 +90,7 @@ class AnswerAQuestion(FormView):
                 chosen_answers="",  # not used
             )
 
-        fetched_questions = {}
+        fetched_questions: Dict[int, FetchedQuestion] = {}
         for question in quizz.questions.all():
             fetched_questions[question.pk] = FetchedQuestion(
                 pk=question.pk,
@@ -89,7 +98,7 @@ class AnswerAQuestion(FormView):
                 possible_answers="\n".join(question.possible_answers_html),
             )
 
-        unanswered_questions = []
+        unanswered_questions: List[FetchedQuestion] = []
         for question in fetched_questions.values():
             if any(
                 answer.question == question.pk for answer in fetched_answers.values()
@@ -160,24 +169,24 @@ class QuizzStatistics(TemplateView):
         quizz = quizz_sending.quizz
         group = quizz_sending.group
 
-        fetched_questions = {}
+        fetched_questions: Dict[int, FetchedQuestion] = {}
         for question in quizz.questions.all():
             fetched_questions[question.pk] = FetchedQuestion(
                 pk=question.pk,
                 statement=question.statement_html,
                 possible_answers="\n".join(question.possible_answers_html),
             )
-        fetched_persons = {}
+        fetched_persons: Dict[str, FetchedPerson] = {}
         for person in group.persons.all():
             fetched_persons[person.email] = FetchedPerson(email=person.email)
-        fetched_answers = {}
+        fetched_answers: Dict[int, FetchedAnswer] = {}
         for answer in quizz_sending.answers.all():
             fetched_answers[answer.pk] = FetchedAnswer(
                 email=answer.person.email,
                 nb_points=answer.nb_points,
                 question=answer.question.pk,
                 quizz_sending=0,  # not used
-                chosen_answers="",  # not used
+                chosen_answers=answer.answers,
             )
 
         nb_questions = quizz.nb_questions
@@ -218,12 +227,13 @@ class QuizzStatistics(TemplateView):
         kwargs["persons_correct_questions"] = persons_correct_questions
 
         questions_status = []
+        questions_answers_stats = {}
         for question in fetched_questions.values():
-            answers = (
+            answers = [
                 answer
                 for answer in fetched_answers.values()
                 if answer.question == question.pk
-            )
+            ]
             nb_points = sum(answer.nb_points for answer in answers)
             questions_status.append(
                 Statistics(
@@ -233,8 +243,25 @@ class QuizzStatistics(TemplateView):
                     extra_text=question.possible_answers,
                 )
             )
+            questions_answers_stats[question.statement] = []
+            nb_answers = len(answers)
+            print("##", question.possible_answers, "##")  # TODO à virer
+            for index, possible_answer in enumerate(
+                question.possible_answers.splitlines()
+            ):
+                questions_answers_stats[question.statement].append(
+                    Statistics(
+                        text=possible_answer,
+                        value=sum(
+                            1
+                            for answer in answers
+                            if str(index) in answer.chosen_answers
+                        ),
+                        max_value=nb_answers,
+                    )
+                )
         kwargs["questions"] = questions_status
-
+        kwargs["questions_answers_stats"] = questions_answers_stats
         return kwargs
 
 
