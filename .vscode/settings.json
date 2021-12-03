@@ -6,4 +6,7 @@
     "python.linting.pylintArgs": [
         "--load-plugins=pylint_django"
     ],
+    "python.analysis.extraPaths": [
+        "/home/vincent/documents/programmation/pyquizz/pyquizz"
+    ],
 }
