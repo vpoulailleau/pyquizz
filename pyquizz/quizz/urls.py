@@ -5,6 +5,7 @@ from django.urls import path, register_converter
 
 from quizz.views import (
     AnswerAQuestion,
+    HelpView,
     QuizzStatistics,
     QuizzStatisticsCSV,
     QuizzStatisticsList,
@@ -106,5 +107,10 @@ urlpatterns = [
         "statistiques/",
         QuizzStatisticsList.as_view(),
         name="quizz_statistics_list",
+    ),
+    path(
+        "aide/",
+        HelpView.as_view(),
+        name="quizz_help",
     ),
 ]

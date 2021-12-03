@@ -14,9 +14,7 @@ FetchedAnswer = namedtuple(
     "FetchedAnswer",
     ["email", "nb_points", "question", "quizz_sending", "chosen_answers"],
 )
-FetchedQuestion = namedtuple(
-    "FetchedQuestion", ["pk", "statement", "possible_answers"]
-)
+FetchedQuestion = namedtuple("FetchedQuestion", ["pk", "statement", "possible_answers"])
 FetchedPerson = namedtuple("FetchedPerson", ["email"])
 
 
@@ -46,9 +44,7 @@ class AnswerAQuestion(FormView):
         return super().form_invalid(form)
 
     def get_success_url(self):
-        return reverse(
-            "form", kwargs={"email": self.email, "date": self.date_for_url}
-        )
+        return reverse("form", kwargs={"email": self.email, "date": self.date_for_url})
 
     def get_context_data(self, **kwargs):
         # TODO better usage of ORM
@@ -60,14 +56,10 @@ class AnswerAQuestion(FormView):
         kwargs["form"] = self.get_form()
 
         quizz_sending = (
-            QuizzSending.objects.filter(date=self.date)
-            .select_related("quizz")
-            .first()
+            QuizzSending.objects.filter(date=self.date).select_related("quizz").first()
         )
         if not quizz_sending:
-            messages.error(
-                self.request, "Pas de quiz correspondant à cette date"
-            )
+            messages.error(self.request, "Pas de quiz correspondant à cette date")
             kwargs["finished"] = False
             kwargs["nb_questions_left"] = 0
             return kwargs
@@ -100,8 +92,7 @@ class AnswerAQuestion(FormView):
         unanswered_questions = []
         for question in fetched_questions.values():
             if any(
-                answer.question == question.pk
-                for answer in fetched_answers.values()
+                answer.question == question.pk for answer in fetched_answers.values()
             ):
                 continue
             unanswered_questions.append(question)
@@ -163,9 +154,7 @@ class QuizzStatistics(TemplateView):
             .first()
         )
         if not quizz_sending:
-            messages.error(
-                self.request, "Pas de quizz correspondant à cette date"
-            )
+            messages.error(self.request, "Pas de quizz correspondant à cette date")
             kwargs["quizz_sending"] = None
             return kwargs
         quizz = quizz_sending.quizz
@@ -219,9 +208,7 @@ class QuizzStatistics(TemplateView):
         persons_correct_questions = []
         for email in fetched_persons:
             answers = (
-                answer
-                for answer in fetched_answers.values()
-                if answer.email == email
+                answer for answer in fetched_answers.values() if answer.email == email
             )
             nb_points = sum(answer.nb_points for answer in answers)
             persons_correct_questions.append(
@@ -283,9 +270,7 @@ class QuizzStatisticsCSV(TemplateView):
             .first()
         )
         if not quizz_sending:
-            messages.error(
-                self.request, "Pas de quizz correspondant à cette date"
-            )
+            messages.error(self.request, "Pas de quizz correspondant à cette date")
             kwargs["quizz_sending"] = None
             return kwargs
         quizz = quizz_sending.quizz
@@ -313,9 +298,7 @@ class QuizzStatisticsCSV(TemplateView):
         persons_correct_questions = []
         for email in fetched_persons:
             answers = (
-                answer
-                for answer in fetched_answers.values()
-                if answer.email == email
+                answer for answer in fetched_answers.values() if answer.email == email
             )
             nb_points = sum(answer.nb_points for answer in answers)
             persons_correct_questions.append(
@@ -383,9 +366,7 @@ class StudentStatistics(TemplateView):
                 nb_points = sum(answer.nb_points for answer in answers)
                 total_points += nb_points
                 max_total_points += 1
-                answers_text = "\n".join(
-                    answer.chosen_answers for answer in answers
-                )
+                answers_text = "\n".join(answer.chosen_answers for answer in answers)
                 quizz_sendings_status[quizz_sending].append(
                     Statistics(
                         text=question.statement_html,
@@ -407,14 +388,16 @@ class StudentStatistics(TemplateView):
         return kwargs
 
 
+class HelpView(TemplateView):
+    template_name = "quizz/help.html"
+
+
 class QuizzStatisticsList(TemplateView):
     template_name = "quizz/quizz_statistics_list.html"
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
-        quizz_sendings = QuizzSending.objects.order_by("-date").select_related(
-            "quizz"
-        )
+        quizz_sendings = QuizzSending.objects.order_by("-date").select_related("quizz")
         kwargs["quizz_sendings"] = quizz_sendings
         return kwargs
 
@@ -459,9 +442,7 @@ class Review(TemplateView):
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
         kwargs["review"] = self.review
-        kwargs["answers"] = ReviewAnswerModel.objects.filter(
-            review=self.review
-        )
+        kwargs["answers"] = ReviewAnswerModel.objects.filter(review=self.review)
         return kwargs
 
 

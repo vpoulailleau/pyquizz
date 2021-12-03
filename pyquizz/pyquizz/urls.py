@@ -6,23 +6,18 @@ from django.urls import include, path
 from django.views.generic import RedirectView
 
 urlpatterns = [
+    path("", RedirectView.as_view(url="quiz/aide/")),
     path("quiz/", include("quizz.urls")),
     path("gestion/", admin.site.urls),
-    path(
-        "favicon.png", RedirectView.as_view(url="/static/pyquizz/favicon.png")
-    ),
-    path(
-        "favicon.ico", RedirectView.as_view(url="/static/pyquizz/favicon.ico")
-    ),
+    path("favicon.png", RedirectView.as_view(url="/static/pyquizz/favicon.png")),
+    path("favicon.ico", RedirectView.as_view(url="/static/pyquizz/favicon.ico")),
     path(
         "apple-touch-icon.png",
         RedirectView.as_view(url="/static/pyquizz/apple-touch-icon.png"),
     ),
     path(
         "apple-touch-icon-precomposed.png",
-        RedirectView.as_view(
-            url="/static/pyquizz/apple-touch-icon-precomposed.png"
-        ),
+        RedirectView.as_view(url="/static/pyquizz/apple-touch-icon-precomposed.png"),
     ),
 ]
 
