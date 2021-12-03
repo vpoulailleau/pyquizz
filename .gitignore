@@ -2,6 +2,7 @@
 init_groups*.py
 # to avoid answers in repo
 init_quiz_*.py
+venv_production/
 
 static_collected
 
