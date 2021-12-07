@@ -2,7 +2,7 @@
 init_groups*.py
 # to avoid answers in repo
 init_quiz_*.py
-venv_production/
+venv_*/
 pip_freeze_20*
 
 static_collected
