@@ -1,18 +1,20 @@
 import random
 from collections import namedtuple
+from datetime import datetime
 from typing import List, Dict
 
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
+from django.utils.timezone import get_fixed_timezone
 from django.views.generic import FormView, TemplateView
 from django.template.defaultfilters import register
 
 
 @register.filter(name="dict_key")
 def dict_key(d, k):
-    """Returns the given key from a dictionary."""
-    return d[k]
+    """Returns the given key from a dictionary, or an empty list."""
+    return d.get(k, [])
 
 
 from .forms import AnswerForm, ReviewForm
@@ -151,7 +153,7 @@ class QuizzStatistics(TemplateView):
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
-        quizz_sending = (
+        quizz_sending: QuizzSending = (
             QuizzSending.objects.filter(date=kwargs["date"])
             .select_related("quizz")
             .select_related("group")
@@ -261,7 +263,11 @@ class QuizzStatistics(TemplateView):
                     )
                 )
         kwargs["questions"] = questions_status
-        kwargs["questions_answers_stats"] = questions_answers_stats
+        if datetime.now(tz=get_fixed_timezone(1)) > quizz_sending.end_date:
+            kwargs["questions_answers_stats"] = questions_answers_stats
+        else:
+            kwargs["questions_answers_stats"] = {}
+
         return kwargs
 
 
