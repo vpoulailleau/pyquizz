@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "venv_production/bin/python",
+    "python.pythonPath": "venv_prod_3.8.3/bin/python",
     "python.autoComplete.extraPaths": [
         "/home/vincent/documents/programmation/pyquizz/pyquizz"
     ],
