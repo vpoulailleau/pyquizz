@@ -157,8 +157,8 @@
                 {% for answer_stat in question_stat %}
                 <tr>
 
-                    <td class="pl-5">{{ answer_stat.text|safe }}</td>
-                    <td>
+                    <td class="pl-5{% if forloop.first %} pt-4{% endif %}{% if forloop.last %} pb-5{% endif %}">{{ answer_stat.text|safe }}</td>
+                    <td class="{% if forloop.first %}pt-4{% endif %}{% if forloop.last %} pb-5{% endif %}">
                         <div class="progress">
                             <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
                                 style="width: {{ answer_stat.progress.percentage }}%;" aria-valuenow="{{ answer_stat.progress.value }}"
