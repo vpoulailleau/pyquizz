@@ -140,7 +140,7 @@
                     <td class="py-4 pl-3 align-middle">
                         {{ question.text }}
                     </td>
-                    <td class="py-4">
+                    <td class="py-4 pr-3">
                         <div class="progress" style="height: 3em">
                             <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
                                 style="width: {{ question.progress.percentage }}%;" aria-valuenow="{{ question.progress.value }}"
@@ -158,7 +158,7 @@
                 <tr>
 
                     <td class="pl-5{% if forloop.first %} pt-4{% endif %}{% if forloop.last %} pb-5{% endif %}">{{ answer_stat.text|safe }}</td>
-                    <td class="{% if forloop.first %}pt-4{% endif %}{% if forloop.last %} pb-5{% endif %}">
+                    <td class="{% if forloop.first %} pt-4{% endif %}{% if forloop.last %} pb-5{% endif %}">
                         <div class="progress">
                             <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
                                 style="width: {{ answer_stat.progress.percentage }}%;" aria-valuenow="{{ answer_stat.progress.value }}"
