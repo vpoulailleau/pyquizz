@@ -5,11 +5,16 @@
 {% block content %}
 <div class="container">
     <h1>Statistiques</h1>
+
+    {% for group in quizz_sendings %}
+    <h2>{{ group }}</h2>
     <ul>
-        {% for quizz_sending in quizz_sendings %}
+        {% for quizz_sending in quizz_sendings|dict_key:group %}
         <li><a href="{% url 'quizz_statistics' date=quizz_sending.date_for_url %}">{{ quizz_sending.date }} :
                 {{ quizz_sending.quizz.name }}</a></li>
         {% endfor %}
     </ul>
+    {% endfor %}
+
 </div>
 {% endblock %}

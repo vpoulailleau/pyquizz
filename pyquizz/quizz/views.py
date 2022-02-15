@@ -1,5 +1,5 @@
 import random
-from collections import namedtuple
+from collections import defaultdict, namedtuple
 from datetime import datetime
 from typing import List, Dict
 
@@ -430,8 +430,13 @@ class QuizzStatisticsList(TemplateView):
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
-        quizz_sendings = QuizzSending.objects.order_by("-date").select_related("quizz")
-        kwargs["quizz_sendings"] = quizz_sendings
+        quizz_sendings = QuizzSending.objects.order_by("-date").select_related(
+            "quizz", "group"
+        )
+        sendings = defaultdict(list)
+        for quizz_sending in sorted(quizz_sendings, key=lambda qs: (qs.group.name, qs.date.isoformat())):
+            sendings[quizz_sending.group.name].append(quizz_sending)
+        kwargs["quizz_sendings"] = sendings
         return kwargs
 
 
