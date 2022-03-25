@@ -39,20 +39,27 @@ class DateTimeConverter:
 
 
 def review_list():
-    """Generate regex for reviews."""
+    """
+    Generate regex for reviews.
+    
+    For instance B1a-2022.
+    """
+    current_year = datetime.now().date().year
     reviews = [
-        "B1a-2021",
-        "B1b-2021",
-        "BTS-SN-1-2021",
-        "BTS-SN-2-2021",
-        "B3-2021",
-        "M1M2-2021",
-        "piscine-2021",
-        "arinfo-2021",
+        "B1a",
+        "B1b",
+        "B1c",
+        "BTS-SN-1",
+        "BTS-SN-2",
+        "B3R",
+        "B3I",
+        "M1M2",
+        "piscine",
+        "arinfo",
     ]
     for index, review in enumerate(reviews):
         review = review.replace("-", r"\-")
-        reviews[index] = f"(?:{review})"
+        reviews[index] = f"(?:{review}\\-{current_year})"
     return "|".join(reviews)
 
 
