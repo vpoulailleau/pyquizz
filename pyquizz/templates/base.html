@@ -45,7 +45,12 @@
         <div class="collapse navbar-collapse" id="navbarsExampleDefault">
             <ul class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
-                <li class="navbar-text">{{ user.username }}</li> TODO afficher le nom et prénom, ou un lien vers un formulaire pour le compléter
+                    {% if user.first_name and user.last_name %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'update_profile' %}">{{ user.first_name }} {{ user.last_name }}</a></li>
+                    {% else %}
+                    <li class="navbar-text">{{ user.username }} <a class="p-3 mb-2 bg-danger text-white" href="{% url 'update_profile' %}">Rentrer le nom et le prénom</a></li>
+                    {% endif %}
+
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'account_logout' %}">Déconnexion</a>
                 </li>

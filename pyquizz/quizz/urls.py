@@ -2,7 +2,6 @@ import re
 from datetime import datetime
 
 from django.urls import path, register_converter
-
 from quizz.views import (
     AnswerAQuestion,
     HelpView,
@@ -13,6 +12,7 @@ from quizz.views import (
     ReviewAnswer,
     ReviewList,
     StudentStatistics,
+    UpdateProfile,
 )
 
 
@@ -39,9 +39,8 @@ class DateTimeConverter:
 
 
 def review_list():
-    """
-    Generate regex for reviews.
-    
+    """Generate regex for reviews.
+
     For instance B1a-2022.
     """
     current_year = datetime.now().date().year
@@ -120,4 +119,5 @@ urlpatterns = [
         HelpView.as_view(),
         name="quizz_help",
     ),
+    path("profil/", UpdateProfile.as_view(), name="update_profile"),
 ]

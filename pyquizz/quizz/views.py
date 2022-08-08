@@ -7,8 +7,10 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
 from django.utils.timezone import get_fixed_timezone
-from django.views.generic import FormView, TemplateView
+from django.views.generic import FormView, TemplateView, UpdateView
 from django.template.defaultfilters import register
+from django.contrib.auth.models import User
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 @register.filter(name="dict_key")
@@ -434,7 +436,9 @@ class QuizzStatisticsList(TemplateView):
             "quizz", "group"
         )
         sendings = defaultdict(list)
-        for quizz_sending in sorted(quizz_sendings, key=lambda qs: (qs.group.name, qs.date.isoformat())):
+        for quizz_sending in sorted(
+            quizz_sendings, key=lambda qs: (qs.group.name, qs.date.isoformat())
+        ):
             sendings[quizz_sending.group.name].append(quizz_sending)
         kwargs["quizz_sendings"] = sendings
         return kwargs
@@ -486,3 +490,13 @@ class Review(TemplateView):
 
 class ReviewList(TemplateView):
     pass
+
+
+class UpdateProfile(LoginRequiredMixin, UpdateView):
+    model = User
+    fields = ["first_name", "last_name"]
+    template_name = "quizz/user_update.html"
+    success_url = "/"
+
+    def get_object(self, queryset=None):
+        return self.request.user
