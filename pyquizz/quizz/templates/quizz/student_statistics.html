@@ -39,13 +39,12 @@
                 <tr scope="row">
                     <td>
                         {{ question.text }}
-                        {% comment %}
+
                         <ul>
                         {% for answer in question.extra_text.splitlines %}
                             <li>{{ answer|safe }}</li>
                         {% endfor %}
                         </ul>
-                        {% endcomment %}
                     </td>
                     <td>
                         <div class="progress">
