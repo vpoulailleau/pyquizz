@@ -1,7 +1,17 @@
 from django.contrib import admin
+from django.contrib.auth.models import User
 from django.utils.html import format_html, format_html_join
 
 from .models import Answer, Group, Question, Quizz, QuizzSending, ReviewAnswer
+
+
+def user_display(user: User) -> str:
+    if user.first_name or user.last_name:
+        return f"{user.last_name} {user.first_name} ({user.username})"
+    return f"({user.username})"
+
+
+User.__str__ = user_display
 
 
 def format_list(generator):
