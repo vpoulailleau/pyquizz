@@ -34,7 +34,7 @@ class Group(models.Model):
         help_text="slug du groupe (basé sur le nom)",
         max_length=50,
     )
-    persons = models.ManyToManyField(User, related_name="groups")
+    persons = models.ManyToManyField(User, related_name="pyquizz_groups")
 
     class Meta:
         ordering = ["name"]
