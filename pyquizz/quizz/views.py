@@ -15,6 +15,7 @@ from django.utils.text import slugify
 from django.utils.timezone import get_fixed_timezone
 from django.views.generic import FormView, TemplateView, View
 
+import qrcode
 
 @register.filter(name="dict_key")
 def dict_key(d, k):
@@ -154,8 +155,20 @@ class Statistics:
 class QuizzStatistics(TemplateView):
     template_name = "quizz/statistics.html"
 
+    def generate_qrcode(self, date):
+        # url = reverse("quizz_statistics", date)
+        url = "https://www.lecalamar.fr"
+        img = qrcode.make(url,error_correction=qrcode.constants.ERROR_CORRECT_H )
+        fss = FileSystemStorage()
+        safe_date = str(date).replace(":", "_").replace(" ","_")
+        qrcode_url = f"qrcodes/{safe_date}.png"
+        filepath = fss.path(qrcode_url)
+        img.save(filepath)
+        return fss.url(qrcode_url)
+
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
+        kwargs["qrcode"] = self.generate_qrcode(date=kwargs["date"])
         quizz_sending: QuizzSending = (
             QuizzSending.objects.filter(date=kwargs["date"])
             .select_related("quizz")
