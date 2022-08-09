@@ -95,29 +95,19 @@ urlpatterns = [
     ),
     path("<date:date>/", AnswerAQuestion.as_view(), name="form"),
     path(
-        "<email:email>/",
-        StudentStatistics.as_view(),
-        name="student_statistics",
-    ),
-    path(
         "statistiques/<date:date>/csv",
         QuizzStatisticsCSV.as_view(content_type="text/plain"),
         name="quizz_statistics_csv",
     ),
     path(
-        "statistiques/<date:date>/",
-        QuizzStatistics.as_view(),
-        name="quizz_statistics",
+        "statistiques/<date:date>/", QuizzStatistics.as_view(), name="quizz_statistics"
     ),
     path(
         "statistiques/",
         QuizzStatisticsList.as_view(),
         name="quizz_statistics_list",
     ),
-    path(
-        "aide/",
-        HelpView.as_view(),
-        name="quizz_help",
-    ),
+    path("aide/", HelpView.as_view(), name="quizz_help"),
     path("profil/", UpdateProfile.as_view(), name="update_profile"),
+    path("", StudentStatistics.as_view(), name="student_statistics"),
 ]

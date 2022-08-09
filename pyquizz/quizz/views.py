@@ -345,15 +345,12 @@ class QuizzStatisticsCSV(TemplateView):  # TODO mettre les noms prénoms des use
         return kwargs
 
 
-class StudentStatistics(TemplateView):
+class StudentStatistics(LoginRequiredMixin, TemplateView):
     template_name = "quizz/student_statistics.html"
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
-        person = User.objects.filter(email=kwargs["email"]).first()
-        if not person:
-            messages.error(self.request, "Cet email est inconnu.")
-            return kwargs
+        person = self.request.user
 
         fetched_answers = {}
         quizz_sending_ids = set()
