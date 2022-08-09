@@ -5,6 +5,7 @@ from typing import Dict, List
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render
@@ -276,19 +277,11 @@ class QuizzStatisticsCSV(TemplateView):  # TODO mettre les noms prénoms des use
     template_name = "quizz/statistics.csv"
 
     @staticmethod
-    def is_ynov_group(group):
-        for person in group.persons.all():
-            if not person.email.endswith("@ynov.com"):
-                return False
-        return True
-
-    @staticmethod
-    def ynovmail2name(ynov: bool, email):
-        if ynov:
-            name = email.split("@")[0]
-            first_name, last_name = name.split(".")
-            return f"{last_name} {first_name}"
-        return email
+    def user2name(email):
+        user = User.objects.filter(email=email).first()
+        if user.first_name and user.last_name:
+            return f"{user.last_name.upper()} {user.first_name.title()}"
+        return f"{user.username.upper()} {user.email}"
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
@@ -328,7 +321,6 @@ class QuizzStatisticsCSV(TemplateView):  # TODO mettre les noms prénoms des use
         len(fetched_persons)
         kwargs["quizz_sending"] = quizz_sending
 
-        ynov_group = self.is_ynov_group(group)
         persons_correct_questions = []
         for email in fetched_persons:
             answers = (
@@ -337,7 +329,7 @@ class QuizzStatisticsCSV(TemplateView):  # TODO mettre les noms prénoms des use
             nb_points = sum(answer.nb_points for answer in answers)
             persons_correct_questions.append(
                 Statistics(
-                    text=self.ynovmail2name(ynov_group, email),
+                    text=self.user2name(email),
                     value=nb_points,
                     max_value=nb_questions,
                 )
