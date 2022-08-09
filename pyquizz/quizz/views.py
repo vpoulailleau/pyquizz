@@ -412,7 +412,6 @@ class StudentStatistics(LoginRequiredMixin, TemplateView):
                     max_value=max_total_points,
                 ),
             )
-        # TODO quizz_sendings_status.sort(key=lambda q: q.date, reverse=True)
         kwargs["quizzes"] = quizz_sendings_status
         return kwargs
 
