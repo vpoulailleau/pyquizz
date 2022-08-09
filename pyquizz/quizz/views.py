@@ -536,7 +536,7 @@ class UploadFile(LoginRequiredMixin, FormView):
             if fss.exists(filename):
                 messages.info(
                     self.request,
-                    "Le fichier déjà existant a été supprimé, le nouveau fichier va l'écraser",
+                    "Le fichier déjà existant a été supprimé, le nouveau fichier va l'écraser.",
                 )
                 fss.delete(filename)
             fss.save(filename, file)
