@@ -3,6 +3,7 @@ from collections import defaultdict, namedtuple
 from datetime import datetime
 from typing import Dict, List
 
+import qrcode
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -15,7 +16,6 @@ from django.utils.text import slugify
 from django.utils.timezone import get_fixed_timezone
 from django.views.generic import FormView, TemplateView, View
 
-import qrcode
 
 @register.filter(name="dict_key")
 def dict_key(d, k):
@@ -156,12 +156,12 @@ class QuizzStatistics(TemplateView):
     template_name = "quizz/statistics.html"
 
     def generate_qrcode(self, date):
-        # url = reverse("quizz_statistics", date)
-        url = "https://www.lecalamar.fr"
-        img = qrcode.make(url,error_correction=qrcode.constants.ERROR_CORRECT_H )
+        date_str = str(date).replace(":", "-").replace(" ", "--")
+        date_str = date_str[:-3]  # remove seconds, ugly isn't it?
+        url = self.request.build_absolute_uri(reverse("form", args=[date_str]))
+        img = qrcode.make(url, error_correction=qrcode.constants.ERROR_CORRECT_H)
         fss = FileSystemStorage()
-        safe_date = str(date).replace(":", "_").replace(" ","_")
-        qrcode_url = f"qrcodes/{safe_date}.png"
+        qrcode_url = f"qrcodes/{date_str}.png"
         filepath = fss.path(qrcode_url)
         img.save(filepath)
         return fss.url(qrcode_url)
