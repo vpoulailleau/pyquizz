@@ -59,10 +59,7 @@
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% provider_login_url 'google' %}">S'authentifier avec Google</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'account_login' %}">S'authentifier classiquement</a>
+                    <a class="nav-link" href="{% url 'account_login' %}">Se connecter</a>
                 </li>
                 {% endif %}
                 {% block nav %}{% endblock %}
