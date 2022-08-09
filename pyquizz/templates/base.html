@@ -35,11 +35,14 @@
             color: white;
             border-radius: .25rem;
         }
+        .dyslexic {
+            background-color: green !important;
+        }
     </style>
     {% block script %}{% endblock %}
 </head>
 
-<body>
+<body{% if user.is_authenticated %}{% if user.profile.dyslexic %} class="dyslexic"{% endif %}{% endif %}>
 
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
         <a class="navbar-brand" href="{% url 'quizz_help' %}">Gestionnaire de quiz</a>
