@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Envoi de fichier zip{% endblock %}
+
+{% block contentpyquizz %}
+<div class="container">
+    <h1>Envoi de fichier zip</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Envoyer</button>
+    </form>
+</div>
+{% endblock %}

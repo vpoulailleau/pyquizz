@@ -6,6 +6,7 @@ venv_*/
 pip_freeze_20*
 
 static_collected
+media/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

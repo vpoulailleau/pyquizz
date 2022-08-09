@@ -2,6 +2,8 @@ from datetime import datetime
 
 from django import forms
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
 from django.utils.timezone import get_fixed_timezone
 
 from .models import Answer, Profile, Question, QuizzSending, ReviewAnswer
@@ -106,3 +108,20 @@ class ProfileForm(forms.ModelForm):
         fields = ("dyslexic",)
 
     error_css_class = "is-invalid"
+
+
+class UploadZipFileForm(forms.Form):
+    # max_length is for filename
+    file = forms.FileField(
+        max_length=1024,
+        allow_empty_file=False,
+        validators=[
+            FileExtensionValidator(allowed_extensions=["zip", "tar.gz", "tgz"]),
+        ],
+    )
+
+    def clean_file(self):
+        data = self.cleaned_data["file"]
+        if data.content_type in ("application/zip", "application/gzip"):
+            return data
+        raise ValidationError("Invalid content type")

@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 
 from django.urls import path, register_converter
+
 from quizz.views import (
     AnswerAQuestion,
     HelpView,
@@ -13,6 +14,7 @@ from quizz.views import (
     ReviewList,
     StudentStatistics,
     UpdateProfile,
+    UploadFile,
 )
 
 
@@ -109,5 +111,6 @@ urlpatterns = [
     ),
     path("aide/", HelpView.as_view(), name="quizz_help"),
     path("profil/", UpdateProfile.as_view(), name="update_profile"),
+    path("upload/", UploadFile.as_view(), name="upload"),
     path("", StudentStatistics.as_view(), name="student_statistics"),
 ]

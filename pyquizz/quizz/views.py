@@ -12,7 +12,7 @@ from django.template.defaultfilters import register
 from django.urls import reverse
 from django.utils.timezone import get_fixed_timezone
 from django.views.generic import FormView, TemplateView, View
-
+from django.core.files.storage import FileSystemStorage
 
 @register.filter(name="dict_key")
 def dict_key(d, k):
@@ -20,7 +20,7 @@ def dict_key(d, k):
     return d.get(k, [])
 
 
-from .forms import AnswerForm, ProfileForm, ReviewForm, UserForm
+from .forms import AnswerForm, ProfileForm, ReviewForm, UserForm, UploadZipFileForm
 from .models import Answer, Question, QuizzSending
 from .models import ReviewAnswer as ReviewAnswerModel
 
@@ -515,3 +515,26 @@ class UpdateProfile(LoginRequiredMixin, View):
         ctxt["profile_form"] = profile_form
 
         return render(request, self.template_name, self.get_context_data(**ctxt))
+
+
+class UploadFile(LoginRequiredMixin, FormView):
+    form_class = UploadZipFileForm
+    template_name = "quizz/file_upload.html"
+    success_url = "/"
+
+    # TODO limiter la taille des fichiers
+    # TODO mettre dans l'url le nom de l'examen pour créer un sous-dossier
+
+    def post(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        if form.is_valid():
+            file = request.FILES["file"]
+            filename = "deleteme.txt"
+            fss = FileSystemStorage()
+            if fss.exists(filename):
+                fss.delete(filename)
+            fss.save(filename, file)
+            messages.success(self.request, "Fichier envoyé avec succès !")
+            return self.form_valid(form)
+        return self.form_invalid(form)

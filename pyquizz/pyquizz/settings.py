@@ -199,6 +199,9 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, "pyquizz/static"),)
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static_collected")
 
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
 MESSAGE_TAGS = {
     messages.DEBUG: "alert alert-warning",
     messages.INFO: "alert alert-secondary",
