@@ -5,14 +5,15 @@ from typing import Dict, List
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render
 from django.template.defaultfilters import register
 from django.urls import reverse
+from django.utils.text import slugify
 from django.utils.timezone import get_fixed_timezone
 from django.views.generic import FormView, TemplateView, View
-from django.core.files.storage import FileSystemStorage
+
 
 @register.filter(name="dict_key")
 def dict_key(d, k):
@@ -20,7 +21,7 @@ def dict_key(d, k):
     return d.get(k, [])
 
 
-from .forms import AnswerForm, ProfileForm, ReviewForm, UserForm, UploadZipFileForm
+from .forms import AnswerForm, ProfileForm, ReviewForm, UploadZipFileForm, UserForm
 from .models import Answer, Question, QuizzSending
 from .models import ReviewAnswer as ReviewAnswerModel
 
@@ -523,16 +524,20 @@ class UploadFile(LoginRequiredMixin, FormView):
     success_url = "/"
 
     # TODO limiter la taille des fichiers
-    # TODO mettre dans l'url le nom de l'examen pour créer un sous-dossier
 
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         if form.is_valid():
             file = request.FILES["file"]
-            filename = "deleteme.txt"
+            user = self.request.user
+            filename = f"{kwargs['category']}/{slugify(user.last_name)}_{slugify(user.first_name)}___{slugify(user.username)}.zip"
             fss = FileSystemStorage()
             if fss.exists(filename):
+                messages.info(
+                    self.request,
+                    "Le fichier déjà existant a été supprimé, le nouveau fichier va l'écraser",
+                )
                 fss.delete(filename)
             fss.save(filename, file)
             messages.success(self.request, "Fichier envoyé avec succès !")

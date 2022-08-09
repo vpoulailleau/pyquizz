@@ -111,6 +111,6 @@ urlpatterns = [
     ),
     path("aide/", HelpView.as_view(), name="quizz_help"),
     path("profil/", UpdateProfile.as_view(), name="update_profile"),
-    path("upload/", UploadFile.as_view(), name="upload"),
+    path("upload/<slug:category>/", UploadFile.as_view(), name="upload"),
     path("", StudentStatistics.as_view(), name="student_statistics"),
 ]
