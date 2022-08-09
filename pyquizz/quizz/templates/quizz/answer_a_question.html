@@ -13,7 +13,7 @@
     </div>
     {% else %}
     <div class="alert alert-secondary" role="alert">
-        {{ date }} - Plus que {{ nb_questions_left }} questions avant {{ quizz_sending.end_date }}.
+        {{ date }} - Plus que {{ nb_questions_left }} question{{ nb_questions_left|pluralize }} avant {{ quizz_sending.end_date }}.
     </div>
     {% if nb_questions_left %}
     <div class="alert alert-primary" role="alert">
