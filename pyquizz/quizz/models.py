@@ -3,6 +3,8 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
@@ -429,3 +431,23 @@ class ReviewAnswer(models.Model):
         ordering = ["review", "email", "pk"]
         verbose_name = "Réponse à un bilan"
         verbose_name_plural = "Réponses à un bilan"
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    dyslexic = models.BooleanField(
+        null=False,
+        blank=False,
+        default=False,
+        verbose_name="mode dyslexique",
+        help_text="Utilisation d'une police spéciale dyslexique",
+    )
+
+    @receiver(post_save, sender=User)
+    def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            Profile.objects.create(user=instance)
+
+    @receiver(post_save, sender=User)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.profile.save()

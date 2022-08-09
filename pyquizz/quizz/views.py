@@ -1,16 +1,17 @@
 import random
 from collections import defaultdict, namedtuple
 from datetime import datetime
-from typing import List, Dict
+from typing import Dict, List
 
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import render
+from django.template.defaultfilters import register
 from django.urls import reverse
 from django.utils.timezone import get_fixed_timezone
-from django.views.generic import FormView, TemplateView, UpdateView
-from django.template.defaultfilters import register
-from django.contrib.auth.models import User
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import FormView, TemplateView, View
 
 
 @register.filter(name="dict_key")
@@ -19,7 +20,7 @@ def dict_key(d, k):
     return d.get(k, [])
 
 
-from .forms import AnswerForm, ReviewForm
+from .forms import AnswerForm, ProfileForm, ReviewForm, UserForm
 from .models import Answer, Question, QuizzSending
 from .models import ReviewAnswer as ReviewAnswerModel
 
@@ -485,11 +486,32 @@ class ReviewList(TemplateView):
     pass
 
 
-class UpdateProfile(LoginRequiredMixin, UpdateView):
-    model = User
-    fields = ["first_name", "last_name"]
+class UpdateProfile(LoginRequiredMixin, View):
     template_name = "quizz/user_update.html"
-    success_url = "/"
 
-    def get_object(self, queryset=None):
-        return self.request.user
+    def get_context_data(self, **kwargs):
+        if "user_form" not in kwargs:
+            kwargs["user_form"] = UserForm(instance=self.request.user)
+        if "profile_form" not in kwargs:
+            kwargs["profile_form"] = ProfileForm(instance=self.request.user.profile)
+        return kwargs
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, self.get_context_data())
+
+    def post(self, request, *args, **kwargs):
+        ctxt = {}
+        print(request.POST)
+
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, instance=request.user.profile)
+
+        if user_form.is_valid():
+            user_form.save()
+        if profile_form.is_valid():
+            profile_form.save()
+
+        ctxt["user_form"] = user_form
+        ctxt["profile_form"] = profile_form
+
+        return render(request, self.template_name, self.get_context_data(**ctxt))

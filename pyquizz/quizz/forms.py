@@ -4,7 +4,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.utils.timezone import get_fixed_timezone
 
-from .models import Answer, Question, QuizzSending, ReviewAnswer
+from .models import Answer, Profile, Question, QuizzSending, ReviewAnswer
 
 
 class AnswerForm(forms.Form):
@@ -90,3 +90,19 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = ReviewAnswer
         exclude = ["review"]
+
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ("username", "first_name", "last_name", "email")
+
+    error_css_class = "is-invalid"
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ("dyslexic",)
+
+    error_css_class = "is-invalid"

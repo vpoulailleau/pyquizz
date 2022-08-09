@@ -6,7 +6,8 @@
 <div class="container">
     <h1>Mise à jour du profil</h1>
     <form method="post">{% csrf_token %}
-        {{ form.as_p }}
+        {{ user_form.as_p }}
+        {{ profile_form.as_p }}
         <button type="submit" class="btn btn-success">Envoyer</button>
     </form>
 </div>

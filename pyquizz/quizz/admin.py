@@ -1,8 +1,9 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from django.utils.html import format_html, format_html_join
 
-from .models import Answer, Group, Question, Quizz, QuizzSending, ReviewAnswer
+from .models import Answer, Group, Profile, Question, Quizz, QuizzSending, ReviewAnswer
 
 
 def user_display(user: User) -> str:
@@ -12,6 +13,20 @@ def user_display(user: User) -> str:
 
 
 User.__str__ = user_display
+
+
+class ProfileInline(admin.StackedInline):
+    model = Profile
+    can_delete = False
+    verbose_name_plural = "profils"
+
+
+class UserAdmin(BaseUserAdmin):
+    inlines = (ProfileInline,)
+
+
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)
 
 
 def format_list(generator):
