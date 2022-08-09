@@ -31,20 +31,18 @@ FetchedQuestion = namedtuple("FetchedQuestion", ["pk", "statement", "possible_an
 FetchedPerson = namedtuple("FetchedPerson", ["email"])
 
 
-class AnswerAQuestion(FormView):
+class AnswerAQuestion(LoginRequiredMixin, FormView):
     template_name = "quizz/answer_a_question.html"
     form_class = AnswerForm
 
     def get(self, request, *args, **kwargs):
         self.date = kwargs["date"]
         self.date_for_url = self.date.strftime("%Y-%m-%d--%H-%M")
-        self.email = kwargs["email"]
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         self.date = kwargs["date"]
         self.date_for_url = self.date.strftime("%Y-%m-%d--%H-%M")
-        self.email = kwargs["email"]
         return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -57,7 +55,7 @@ class AnswerAQuestion(FormView):
         return super().form_invalid(form)
 
     def get_success_url(self):
-        return reverse("form", kwargs={"email": self.email, "date": self.date_for_url})
+        return reverse("form", kwargs={"date": self.date_for_url})
 
     def get_context_data(self, **kwargs):
         # TODO better usage of ORM
@@ -65,7 +63,7 @@ class AnswerAQuestion(FormView):
 
         kwargs["date_for_url"] = self.date_for_url
         kwargs["date"] = self.date
-        kwargs["email"] = self.email
+        kwargs["email"] = self.request.user.email
         kwargs["form"] = self.get_form()
 
         quizz_sending = (
@@ -79,7 +77,7 @@ class AnswerAQuestion(FormView):
         answers_from_email = (
             Answer.objects.filter(quizz_sending=quizz_sending)
             .select_related("person")
-            .filter(person__email=self.email)
+            .filter(person__email=self.request.user.email)
         )
 
         quizz = quizz_sending.quizz
