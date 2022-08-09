@@ -1,7 +1,0 @@
-{% extends 'base.html' %}
-
-{% block nav %}
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'student_statistics' email=request.user.email %}">Statistiques</a>
-    </li>
-{% endblock %}

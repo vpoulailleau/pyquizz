@@ -54,6 +54,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'account_logout' %}">Déconnexion</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'student_statistics' email=request.user.email %}">Statistiques</a>
+                </li>
                 {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% provider_login_url 'google' %}">S'authentifier avec Google</a>
