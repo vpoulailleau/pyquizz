@@ -30,14 +30,10 @@ class AnswerForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         if "quizz_sending" not in cleaned_data:
-            raise forms.ValidationError(
-                "Ce quizz n'existe pas. Vérifiez la date."
-            )
+            raise forms.ValidationError("Ce quizz n'existe pas. Vérifiez la date.")
         if "email" not in cleaned_data:
             raise forms.ValidationError("Cet email est inconnu.")
-        quizz_sending = QuizzSending.objects.get(
-            pk=cleaned_data["quizz_sending"]
-        )
+        quizz_sending = QuizzSending.objects.get(pk=cleaned_data["quizz_sending"])
         if not quizz_sending.group.persons.filter(email=cleaned_data["email"]):
             raise forms.ValidationError("Ce quizz n'est pas fait pour vous.")
         if not any(
@@ -57,12 +53,8 @@ class AnswerForm(forms.Form):
             raise forms.ValidationError("Aucune réponse n'a été fournie.")
         already_given_answers = (
             Answer.objects.filter(quizz_sending=quizz_sending)
-            .filter(
-                person=Person.objects.get(email=self.cleaned_data["email"])
-            )
-            .filter(
-                question=Question.objects.get(pk=self.cleaned_data["question"])
-            )
+            .filter(person=Person.objects.get(email=self.cleaned_data["email"]))
+            .filter(question=Question.objects.get(pk=self.cleaned_data["question"]))
         )
         if already_given_answers:
             raise forms.ValidationError(
@@ -73,9 +65,7 @@ class AnswerForm(forms.Form):
             raise forms.ValidationError("Ce quiz est maintenant terminé")
 
     def add_answer_in_database(self):
-        quizz_sending = QuizzSending.objects.get(
-            pk=self.cleaned_data["quizz_sending"]
-        )
+        quizz_sending = QuizzSending.objects.get(pk=self.cleaned_data["quizz_sending"])
         person = Person.objects.get(email=self.cleaned_data["email"])
         question = Question.objects.get(pk=self.cleaned_data["question"])
 

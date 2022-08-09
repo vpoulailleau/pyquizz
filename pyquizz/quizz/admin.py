@@ -15,9 +15,7 @@ from .models import (
 def format_list(generator):
     return format_html(
         "<ul>\n{}\n</ul>",
-        format_html_join(
-            "\n", "<li>{}</li>", ((str(item),) for item in generator)
-        ),
+        format_html_join("\n", "<li>{}</li>", ((str(item),) for item in generator)),
     )
 
 
