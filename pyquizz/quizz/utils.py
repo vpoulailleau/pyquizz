@@ -1,33 +1,31 @@
 from django.utils.text import slugify
+from quizz.models import Question, Quizz
 
-from quizz.models import Group, Person, Question, Quizz
+# def init_group(name, emails):
+#     """
+#     Create a group from an email list in a string
 
+#     "toto@toto.com, titi@titi.com, tutu@tutu.com"
+#     """
+#     slug = slugify(name)[:50]
+#     try:
+#         group = Group.objects.get(slug=slug)
+#     except Group.DoesNotExist:
+#         group = Group(name=name, slug=slug)
+#         group.save()
 
-def init_group(name, emails):
-    """
-    Create a group from an email list in a string
+#     emails = emails.split(", ")
 
-    "toto@toto.com, titi@titi.com, tutu@tutu.com"
-    """
-    slug = slugify(name)[:50]
-    try:
-        group = Group.objects.get(slug=slug)
-    except Group.DoesNotExist:
-        group = Group(name=name, slug=slug)
-        group.save()
+#     persons = []
+#     for email in emails:
+#         try:
+#             person = User.objects.get(email=email)
+#         except User.DoesNotExist:
+#             person = User(email=email)
+#             person.save()
+#         persons.append(person)
 
-    emails = emails.split(", ")
-
-    persons = []
-    for email in emails:
-        try:
-            person = Person.objects.get(email=email)
-        except Person.DoesNotExist:
-            person = Person(email=email)
-            person.save()
-        persons.append(person)
-
-    group.persons.add(*persons)
+#     group.persons.add(*persons)
 
 
 def create_quizz(quizz_name):

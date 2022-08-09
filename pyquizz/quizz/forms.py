@@ -1,9 +1,10 @@
 from datetime import datetime
 
 from django import forms
+from django.contrib.auth.models import User
 from django.utils.timezone import get_fixed_timezone
 
-from .models import Answer, Person, Question, QuizzSending, ReviewAnswer
+from .models import Answer, Question, QuizzSending, ReviewAnswer
 
 
 class AnswerForm(forms.Form):
@@ -23,7 +24,7 @@ class AnswerForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data["email"]
-        if not Person.objects.filter(email=email):
+        if not User.objects.filter(email=email):
             raise forms.ValidationError("Cet email est inconnu.")
         return email
 
@@ -53,7 +54,7 @@ class AnswerForm(forms.Form):
             raise forms.ValidationError("Aucune réponse n'a été fournie.")
         already_given_answers = (
             Answer.objects.filter(quizz_sending=quizz_sending)
-            .filter(person=Person.objects.get(email=self.cleaned_data["email"]))
+            .filter(person=User.objects.get(email=self.cleaned_data["email"]))
             .filter(question=Question.objects.get(pk=self.cleaned_data["question"]))
         )
         if already_given_answers:
@@ -66,7 +67,7 @@ class AnswerForm(forms.Form):
 
     def add_answer_in_database(self):
         quizz_sending = QuizzSending.objects.get(pk=self.cleaned_data["quizz_sending"])
-        person = Person.objects.get(email=self.cleaned_data["email"])
+        person = User.objects.get(email=self.cleaned_data["email"])
         question = Question.objects.get(pk=self.cleaned_data["question"])
 
         answers = []
