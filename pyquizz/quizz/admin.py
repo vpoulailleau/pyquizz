@@ -1,15 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html, format_html_join
 
-from .models import (
-    Answer,
-    Group,
-    Person,
-    Question,
-    Quizz,
-    QuizzSending,
-    ReviewAnswer,
-)
+from .models import Answer, Group, Question, Quizz, QuizzSending, ReviewAnswer
 
 
 def format_list(generator):
@@ -17,16 +9,6 @@ def format_list(generator):
         "<ul>\n{}\n</ul>",
         format_html_join("\n", "<li>{}</li>", ((str(item),) for item in generator)),
     )
-
-
-@admin.register(Person)
-class PersonAdmin(admin.ModelAdmin):
-    def groups_display(self, obj):
-        return format_list(obj.groups.all())
-
-    groups_display.short_description = "Groupes"
-
-    list_display = ("email", "groups_display")
 
 
 @admin.register(Group)
