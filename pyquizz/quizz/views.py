@@ -20,7 +20,7 @@ def dict_key(d, k):
 
 
 from .forms import AnswerForm, ReviewForm
-from .models import Answer, Person, Question, QuizzSending
+from .models import Answer, Question, QuizzSending
 from .models import ReviewAnswer as ReviewAnswerModel
 
 FetchedAnswer = namedtuple(
@@ -249,7 +249,6 @@ class QuizzStatistics(TemplateView):
             )
             questions_answers_stats[question.statement] = []
             nb_answers = len(answers)
-            print("##", question.possible_answers, "##")  # TODO à virer
             for index, possible_answer in enumerate(
                 question.possible_answers.splitlines()
             ):
@@ -273,7 +272,7 @@ class QuizzStatistics(TemplateView):
         return kwargs
 
 
-class QuizzStatisticsCSV(TemplateView):
+class QuizzStatisticsCSV(TemplateView):  # TODO mettre les noms prénoms des users
     template_name = "quizz/statistics.csv"
 
     @staticmethod
@@ -353,7 +352,7 @@ class StudentStatistics(TemplateView):
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
-        person = Person.objects.filter(email=kwargs["email"]).first()
+        person = User.objects.filter(email=kwargs["email"]).first()
         if not person:
             messages.error(self.request, "Cet email est inconnu.")
             return kwargs

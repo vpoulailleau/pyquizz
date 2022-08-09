@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -14,28 +15,6 @@ def md2html(text):
     text = text.replace("&lt;sup>", "<sup>").replace("&lt;/sup>", "</sup>")
     text = re.sub(r"`(.*?)`", r"<code>\1</code>", text)
     return mark_safe(text)
-
-
-class Person(models.Model):
-    email = models.EmailField(
-        null=False,
-        blank=False,
-        unique=True,
-        verbose_name="email",
-        help_text="email de la personne",
-        max_length=255,
-    )
-
-    class Meta:
-        ordering = ["email"]
-        verbose_name = "Personne"
-        verbose_name_plural = "Personnes"
-
-    def __str__(self):
-        return self.email
-
-    def get_absolute_url(self):
-        return reverse("quizz_person_detail", args=[str(self.email)])
 
 
 class Group(models.Model):
@@ -55,7 +34,7 @@ class Group(models.Model):
         help_text="slug du groupe (basé sur le nom)",
         max_length=50,
     )
-    persons = models.ManyToManyField(Person, related_name="groups")
+    persons = models.ManyToManyField(User, related_name="groups")
 
     class Meta:
         ordering = ["name"]
@@ -127,9 +106,7 @@ class Question(models.Model):
 
     @cached_property
     def possible_answers(self):
-        answers = [
-            answer.strip() for answer in str(self.answers).split("----")
-        ]
+        answers = [answer.strip() for answer in str(self.answers).split("----")]
         if not self.auto_evaluation:
             answers.append("Sans opinion")
         return answers
@@ -140,9 +117,7 @@ class Question(models.Model):
 
     @cached_property
     def correct_answers_text(self):
-        correct_answers = [
-            int(num) for num in str(self.correct_answers).split(",")
-        ]
+        correct_answers = [int(num) for num in str(self.correct_answers).split(",")]
         possible_answers = self.possible_answers
         return [possible_answers[i] for i in correct_answers]
 
@@ -271,7 +246,7 @@ class QuizzSending(models.Model):
 
     @property
     def nb_persons(self):
-        persons_queryset = self.answers.all()
+        self.answers.all()
         emails = set()
         for p in self.answers.all():
             emails.add(p.person.email)
@@ -289,7 +264,7 @@ class Answer(models.Model):
         help_text="envoi de quizz",
     )
     person = models.ForeignKey(
-        Person,
+        User,
         on_delete=models.CASCADE,
         related_name="answers",
         blank=False,
@@ -325,7 +300,7 @@ class Answer(models.Model):
 
     def __str__(self):
         return (
-            f"réponse de {self.person} à {self.quizz_sending} "
+            f"réponse de {self.person.email} à {self.quizz_sending} "
             f"à la question {self.question} : {self.answers}"
         )
 
@@ -346,10 +321,7 @@ class Answer(models.Model):
     @cached_property
     def chosen_answers_html(self):
         possible_answers = self.question.possible_answers
-        return [
-            md2html(possible_answers[int(index)])
-            for index in self.chosen_answers
-        ]
+        return [md2html(possible_answers[int(index)]) for index in self.chosen_answers]
 
     @cached_property
     def nb_points(self):
