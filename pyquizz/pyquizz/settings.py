@@ -89,7 +89,21 @@ SOCIALACCOUNT_PROVIDERS = {
             "secret": "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",
             "key": "",
         },
-    }
+    },
+    "discord": {
+        "SCOPE": [
+            "identify",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
+        "APP": {
+            "client_id": "1006861269149696040",
+            "secret": "g9buivOdUd5FVo6-h8H-M-E-k3J8A3P6",
+            "key": "574c91db077d1a0885985a20ebac60b02175e12c99436efc38879ce94ca0b627",
+        },
+    },
 }
 
 # SECURITY WARNING: don't run with debug turned on in production!
