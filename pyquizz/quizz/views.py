@@ -159,12 +159,12 @@ class QuizzStatistics(TemplateView):
         date_str = str(date).replace(":", "-").replace(" ", "--")
         date_str = date_str[:-3]  # remove seconds, ugly isn't it?
         url = self.request.build_absolute_uri(reverse("form", args=[date_str]))
-        img = qrcode.make(url, error_correction=qrcode.constants.ERROR_CORRECT_H)
-        fss = FileSystemStorage()
-        # TODO si le fichier existe déjà, ne pas le recréer
         qrcode_url = f"qrcodes/{date_str}.png"
+        fss = FileSystemStorage()
         filepath = fss.path(qrcode_url)
-        img.save(filepath)
+        if not fss.exists(filepath):
+            img = qrcode.make(url, error_correction=qrcode.constants.ERROR_CORRECT_H)
+            img.save(filepath)
         return fss.url(qrcode_url)
 
     def get_context_data(self, **kwargs):
