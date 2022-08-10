@@ -161,6 +161,7 @@ class QuizzStatistics(TemplateView):
         url = self.request.build_absolute_uri(reverse("form", args=[date_str]))
         img = qrcode.make(url, error_correction=qrcode.constants.ERROR_CORRECT_H)
         fss = FileSystemStorage()
+        # TODO si le fichier existe déjà, ne pas le recréer
         qrcode_url = f"qrcodes/{date_str}.png"
         filepath = fss.path(qrcode_url)
         img.save(filepath)
@@ -286,7 +287,7 @@ class QuizzStatistics(TemplateView):
         return kwargs
 
 
-class QuizzStatisticsCSV(TemplateView):  # TODO mettre les noms prénoms des users
+class QuizzStatisticsCSV(TemplateView):
     template_name = "quizz/statistics.csv"
 
     @staticmethod
@@ -379,7 +380,8 @@ class StudentStatistics(LoginRequiredMixin, TemplateView):
                     chosen_answers="\n".join(answer.chosen_answers_html),
                 )
             )
-            quizz_sending_ids.add(answer.quizz_sending.pk)
+            if answer.quizz_sending.started:
+                quizz_sending_ids.add(answer.quizz_sending.pk)
 
         quizz_sendings_status = {}
         for quizz_sending_pk in sorted(quizz_sending_ids, reverse=True):
@@ -486,10 +488,6 @@ class Review(TemplateView):
         kwargs["review"] = self.review
         kwargs["answers"] = ReviewAnswerModel.objects.filter(review=self.review)
         return kwargs
-
-
-class ReviewList(TemplateView):
-    pass
 
 
 class UpdateProfile(LoginRequiredMixin, View):

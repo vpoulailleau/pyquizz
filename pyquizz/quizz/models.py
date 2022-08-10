@@ -20,6 +20,11 @@ def md2html(text):
 
 
 class Group(models.Model):
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "Groupe"
+        verbose_name_plural = "Groupes"
+
     name = models.CharField(
         null=False,
         blank=False,
@@ -38,19 +43,18 @@ class Group(models.Model):
     )
     persons = models.ManyToManyField(User, related_name="pyquizz_groups")
 
-    class Meta:
-        ordering = ["name"]
-        verbose_name = "Groupe"
-        verbose_name_plural = "Groupes"
+    def get_absolute_url(self):
+        return reverse("quizz_group_detail", args=[str(self.slug)])
 
     def __str__(self):
         return self.name
 
-    def get_absolute_url(self):
-        return reverse("quizz_group_detail", args=[str(self.slug)])
-
 
 class Question(models.Model):
+    class Meta:
+        verbose_name = "Question"
+        verbose_name_plural = "Questions"
+
     statement = models.TextField(
         null=False,
         blank=False,
@@ -91,13 +95,6 @@ class Question(models.Model):
         verbose_name="question d'auto-évaluation",
         help_text="est-ce une question d'auto-évaluation",
     )
-
-    class Meta:
-        verbose_name = "Question"
-        verbose_name_plural = "Questions"
-
-    def __str__(self):
-        return self.statement
 
     def get_absolute_url(self):
         return reverse("quizz_question_detail", args=[str(self.slug)])
@@ -147,8 +144,16 @@ class Question(models.Model):
                     points -= 0.5
             return max(0, points)
 
+    def __str__(self):
+        return self.statement
+
 
 class Quizz(models.Model):
+    class Meta:
+        ordering = ["slug"]
+        verbose_name = "Quizz"
+        verbose_name_plural = "Quizzes"
+
     name = models.CharField(
         null=False,
         blank=False,
@@ -174,14 +179,6 @@ class Quizz(models.Model):
         help_text="est-ce que les questions seront posées en ordre aléatoire",
     )
 
-    class Meta:
-        ordering = ["slug"]
-        verbose_name = "Quizz"
-        verbose_name_plural = "Quizzes"
-
-    def __str__(self):
-        return f"{self.name} ({self.nb_questions} questions, {self.nb_questions / 4} minutes)"
-
     def get_absolute_url(self):
         return reverse("quizz_quizz_detail", args=[str(self.slug)])
 
@@ -189,8 +186,16 @@ class Quizz(models.Model):
     def nb_questions(self):
         return self.questions.count()
 
+    def __str__(self):
+        return f"{self.name} ({self.nb_questions} questions, {self.nb_questions / 4} minutes)"
+
 
 class QuizzSending(models.Model):
+    class Meta:
+        ordering = ["-date"]
+        verbose_name = "Envoi de quizz"
+        verbose_name_plural = "Envois de quizz"
+
     quizz = models.ForeignKey(
         Quizz,
         on_delete=models.CASCADE,
@@ -223,20 +228,16 @@ class QuizzSending(models.Model):
         help_text="date de fin du quizz pour un groupe",
         default=datetime(2100, 1, 1, 0, 0, tzinfo=get_fixed_timezone(1)),
     )
-
-    class Meta:
-        ordering = ["-date"]
-        verbose_name = "Envoi de quizz"
-        verbose_name_plural = "Envois de quizz"
-
-    def __str__(self):
-        return f"envoi du {self.date} de {self.quizz} à {self.group}"
+    started = models.BooleanField(
+        null=False,
+        blank=False,
+        default=False,
+        verbose_name="quiz démarré",
+        help_text="est-ce que ce quiz est démarré",
+    )
 
     def get_absolute_url(self):
         return reverse("quizz_quizzsending_detail", args=[str(self.date)])
-
-    def __hash__(self):
-        return hash(("QuizzSending", self.date_for_url))
 
     @cached_property
     def hash(self):
@@ -254,8 +255,19 @@ class QuizzSending(models.Model):
             emails.add(p.person.email)
         return max(1, len(emails))  # avoid division by 0
 
+    def __hash__(self):
+        return hash(("QuizzSending", self.date_for_url))
+
+    def __str__(self):
+        return f"envoi du {self.date} de {self.quizz} à {self.group}"
+
 
 class Answer(models.Model):
+    class Meta:
+        ordering = ["quizz_sending", "person", "question"]
+        verbose_name = "Réponse à une question"
+        verbose_name_plural = "Réponses à des questions"
+
     quizz_sending = models.ForeignKey(
         QuizzSending,
         on_delete=models.CASCADE,
@@ -295,17 +307,6 @@ class Answer(models.Model):
         max_length=20,
     )
 
-    class Meta:
-        ordering = ["quizz_sending", "person", "question"]
-        verbose_name = "Réponse à une question"
-        verbose_name_plural = "Réponses à des questions"
-
-    def __str__(self):
-        return (
-            f"réponse de {self.person.email} à {self.quizz_sending} "
-            f"à la question {self.question} : {self.answers}"
-        )
-
     def get_absolute_url(self):
         return reverse("quizz_answer_detail", args=[str(self.pk)])
 
@@ -329,8 +330,19 @@ class Answer(models.Model):
     def nb_points(self):
         return self.question.nb_points(self)
 
+    def __str__(self):
+        return (
+            f"réponse de {self.person.email} à {self.quizz_sending} "
+            f"à la question {self.question} : {self.answers}"
+        )
+
 
 class ReviewAnswer(models.Model):
+    class Meta:
+        ordering = ["review", "email", "pk"]
+        verbose_name = "Réponse à un bilan"
+        verbose_name_plural = "Réponses à un bilan"
+
     review = models.CharField(
         null=False,
         blank=False,
@@ -426,11 +438,6 @@ class ReviewAnswer(models.Model):
         help_text="Remarques et appréciations sur le prof",
         max_length=1000,
     )
-
-    class Meta:
-        ordering = ["review", "email", "pk"]
-        verbose_name = "Réponse à un bilan"
-        verbose_name_plural = "Réponses à un bilan"
 
 
 class Profile(models.Model):

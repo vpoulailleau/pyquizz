@@ -35,7 +35,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for question in questions %}
+                {% for question in questions|slice:"1:" %}
                 <tr scope="row">
                     <td>
                         {{ question.text }}

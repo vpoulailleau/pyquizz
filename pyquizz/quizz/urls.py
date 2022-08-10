@@ -11,7 +11,6 @@ from quizz.views import (
     QuizzStatisticsList,
     Review,
     ReviewAnswer,
-    ReviewList,
     StudentStatistics,
     UpdateProfile,
     UploadFile,
@@ -89,7 +88,6 @@ urlpatterns = [
         ReviewAnswer.as_view(),
         name="review_form",
     ),
-    path("reviews/", ReviewList.as_view(), name="review_list"),
     path(
         "review/<review_type:review>/answers/",
         Review.as_view(),

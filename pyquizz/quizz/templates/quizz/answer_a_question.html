@@ -4,36 +4,42 @@
 
 {% block contentpyquizz %}
 <div class="container">
-    {% if finished %}
-    <div class="alert alert-secondary" role="alert">
-        {{ date }}
-    </div>
-    <div class="alert alert-primary" role="alert">
-        Le questionnaire est fini ! Merci pour la participation.
-    </div>
+    {% if quizz_sending.started %}
+        {% if finished %}
+        <div class="alert alert-secondary" role="alert">
+            {{ date }}
+        </div>
+        <div class="alert alert-primary" role="alert">
+            Le questionnaire est fini ! Merci pour la participation.
+        </div>
+        {% else %}
+        <div class="alert alert-secondary" role="alert">
+            {{ date }} - Plus que {{ nb_questions_left }} question{{ nb_questions_left|pluralize }} avant {{ quizz_sending.end_date|date:"G:i:s" }}.
+        </div>
+        {% if nb_questions_left %}
+        <div class="alert alert-primary" role="alert">
+            {{ question.statement_html }}
+        </div>
+        <form action="{% url 'form' date=date_for_url %}" method="POST">
+            {% csrf_token %}
+            <input id="email" name="email" type="hidden" value="{{ email }}">
+            <input id="question" name="question" type="hidden" value="{{ question.pk }}">
+            <input id="quizz_sending" name="quizz_sending" type="hidden" value="{{ quizz_sending.pk }}">
+            <ul>
+                {% for possible_answer in question.possible_answers_html %}
+                <li><input id="answer{{ forloop.counter0 }}" name="answer{{ forloop.counter0 }}" type="checkbox">
+                    {{ possible_answer }}</li>
+                {% endfor %}
+            </ul>
+            <button type="submit" class="btn btn-success">Envoyer</button>
+            <button type="reset" class="btn btn-danger">Annuler</button>
+        </form>
+        {% endif %}
+        {% endif %}
     {% else %}
-    <div class="alert alert-secondary" role="alert">
-        {{ date }} - Plus que {{ nb_questions_left }} question{{ nb_questions_left|pluralize }} avant {{ quizz_sending.end_date|date:"G:i:s" }}.
-    </div>
-    {% if nb_questions_left %}
-    <div class="alert alert-primary" role="alert">
-        {{ question.statement_html }}
-    </div>
-    <form action="{% url 'form' date=date_for_url %}" method="POST">
-        {% csrf_token %}
-        <input id="email" name="email" type="hidden" value="{{ email }}">
-        <input id="question" name="question" type="hidden" value="{{ question.pk }}">
-        <input id="quizz_sending" name="quizz_sending" type="hidden" value="{{ quizz_sending.pk }}">
-        <ul>
-            {% for possible_answer in question.possible_answers_html %}
-            <li><input id="answer{{ forloop.counter0 }}" name="answer{{ forloop.counter0 }}" type="checkbox">
-                {{ possible_answer }}</li>
-            {% endfor %}
-        </ul>
-        <button type="submit" class="btn btn-success">Envoyer</button>
-        <button type="reset" class="btn btn-danger">Annuler</button>
-    </form>
-    {% endif %}
+        <div class="alert alert-secondary" role="alert">
+            Ce quiz n'est pas encore démarré.
+        </div>
     {% endif %}
 
 </div>

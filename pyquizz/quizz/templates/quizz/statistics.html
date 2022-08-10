@@ -38,143 +38,150 @@
     <h2>Destinataires</h2>
     <p>Quizz envoyé à {{ quizz_sending.group.name }}.</p>
 
-    <h2>Réponses reçues</h2>
-    <p>{{ total_questions.value }} questions répondues sur {{ total_questions.max_value }} questions
-        envoyées.</p>
-    <div class="progress my-3">
-        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ total_questions.percentage }}%;"
-            aria-valuenow="{{ total_questions.value }}" aria-valuemin="0" aria-valuemax="{{ total_questions.max_value }}">
-            {{ total_questions.percentage }}%
+    {% if quizz_sending.started %}
+        <h2>Réponses reçues</h2>
+        <p>{{ total_questions.value }} questions répondues sur {{ total_questions.max_value }} questions
+            envoyées.</p>
+        <div class="progress my-3">
+            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ total_questions.percentage }}%;"
+                aria-valuenow="{{ total_questions.value }}" aria-valuemin="0" aria-valuemax="{{ total_questions.max_value }}">
+                {{ total_questions.percentage }}%
+            </div>
+            <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ total_questions.reverse_percentage }}%;"
+                aria-valuenow="{{ total_questions.value }}" aria-valuemin="0" aria-valuemax="{{ total_questions.max_value }}"></div>
         </div>
-        <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ total_questions.reverse_percentage }}%;"
-            aria-valuenow="{{ total_questions.value }}" aria-valuemin="0" aria-valuemax="{{ total_questions.max_value }}"></div>
-    </div>
-    <button class="btn btn-primary mb-3" type="button" data-toggle="collapse" data-target="#collapse_reception"
-        aria-expanded="false" aria-controls="collapse_reception">
-        Détail
-    </button>
-    <a class="btn btn-primary mb-3" type="button" id="reloadstop" href="#">
-        Désactiver le rechargement automatique
-    </a>
-    <div class="collapse show" id="collapse_reception">
-        <table class="table table-borderless table-striped">
-            <thead>
-                <tr>
-                    <th scope="col" class="w-25">Email</th>
-                    <th scope="col">Avancement</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for person in persons_answered_questions %}
-                <tr scope="row">
-                    <td>{{ person.text }}</td>
-                    <td>
-                        <div class="progress">
-                            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
-                                style="width: {{ person.progress.percentage }}%;" aria-valuenow="{{ person.progress.value }}"
-                                aria-valuemin="0" aria-valuemax="{{ person.progress.max_value }}">
-                                {{ person.progress.percentage }}%
+        <button class="btn btn-primary mb-3" type="button" data-toggle="collapse" data-target="#collapse_reception"
+            aria-expanded="false" aria-controls="collapse_reception">
+            Détail
+        </button>
+        <a class="btn btn-primary mb-3" type="button" id="reloadstop" href="#">
+            Désactiver le rechargement automatique
+        </a>
+        <div class="collapse show" id="collapse_reception">
+            <table class="table table-borderless table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col" class="w-25">Email</th>
+                        <th scope="col">Avancement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for person in persons_answered_questions %}
+                    <tr scope="row">
+                        <td>{{ person.text }}</td>
+                        <td>
+                            <div class="progress">
+                                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
+                                    style="width: {{ person.progress.percentage }}%;" aria-valuenow="{{ person.progress.value }}"
+                                    aria-valuemin="0" aria-valuemax="{{ person.progress.max_value }}">
+                                    {{ person.progress.percentage }}%
+                                </div>
+                                <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar"
+                                    style="width: {{ person.progress.reverse_percentage }}%;" aria-valuenow="{{ person.progress.value }}"
+                                    aria-valuemin="0" aria-valuemax="{{ person.progress.max_value }}"></div>
                             </div>
-                            <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar"
-                                style="width: {{ person.progress.reverse_percentage }}%;" aria-valuenow="{{ person.progress.value }}"
-                                aria-valuemin="0" aria-valuemax="{{ person.progress.max_value }}"></div>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-    <h2>Réponses correctes</h2>
-    <h3>Par personne</h3>
-    <button class="btn btn-primary mb-3" type="button" data-toggle="collapse" data-target="#collapse_correct"
-        aria-expanded="false" aria-controls="collapse_correct">
-        Détail
-    </button>
-    <div class="collapse" id="collapse_correct">
-        <table class="table table-borderless table-striped">
-            <thead>
-                <tr>
-                    <th scope="col" class="w-25">Email</th>
-                    <th scope="col">Résultat</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for person in persons_correct_questions %}
-                <tr scope="row">
-                    <td>{{ person.text }}</td>
-                    <td>
-                        <div class="progress">
-                            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
-                                style="width: {{ person.progress.percentage }}%;" aria-valuenow="{{ person.progress.value }}"
-                                aria-valuemin="0" aria-valuemax="{{ person.progress.max_value }}">
-                                {{ person.progress.note }} / 20
+        <h2>Réponses correctes</h2>
+        <h3>Par personne</h3>
+        <button class="btn btn-primary mb-3" type="button" data-toggle="collapse" data-target="#collapse_correct"
+            aria-expanded="false" aria-controls="collapse_correct">
+            Détail
+        </button>
+        <div class="collapse" id="collapse_correct">
+            <table class="table table-borderless table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col" class="w-25">Email</th>
+                        <th scope="col">Résultat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for person in persons_correct_questions %}
+                    <tr scope="row">
+                        <td>{{ person.text }}</td>
+                        <td>
+                            <div class="progress">
+                                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
+                                    style="width: {{ person.progress.percentage }}%;" aria-valuenow="{{ person.progress.value }}"
+                                    aria-valuemin="0" aria-valuemax="{{ person.progress.max_value }}">
+                                    {{ person.progress.note }} / 20
+                                </div>
+                                <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar"
+                                    style="width: {{ person.progress.reverse_percentage }}%" aria-valuenow="{{ person.progress.reverse_percentage }}"
+                                    aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
-                            <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar"
-                                style="width: {{ person.progress.reverse_percentage }}%" aria-valuenow="{{ person.progress.reverse_percentage }}"
-                                aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-    <h3>Par question</h3>
-    <button class="btn btn-primary mb-3" type="button" data-toggle="collapse" data-target="#collapse_question"
-        aria-expanded="false" aria-controls="collapse_question">
-        Détail
-    </button>
-    <div class="collapse" id="collapse_question">
-        <table class="table table-borderless table-sm">
-            <thead>
-                <tr>
-                    <th scope="col" class="w-50">Question</th>
-                    <th scope="col">Résultat</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for question in questions %}
-                <tr scope="row" class="table-active mt-5">
-                    <td class="py-4 pl-3 align-middle">
-                        {{ question.text }}
-                    </td>
-                    <td class="py-4 pr-3">
-                        <div class="progress" style="height: 3em">
-                            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
-                                style="width: {{ question.progress.percentage }}%;" aria-valuenow="{{ question.progress.value }}"
-                                aria-valuemin="0" aria-valuemax="{{ question.progress.max_value }}">
-                                {{ question.progress.percentage }}%
+        <h3>Par question</h3>
+        <button class="btn btn-primary mb-3" type="button" data-toggle="collapse" data-target="#collapse_question"
+            aria-expanded="false" aria-controls="collapse_question">
+            Détail
+        </button>
+        <div class="collapse" id="collapse_question">
+            <table class="table table-borderless table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col" class="w-50">Question</th>
+                        <th scope="col">Résultat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for question in questions %}
+                    <tr scope="row" class="table-active mt-5">
+                        <td class="py-4 pl-3 align-middle">
+                            {{ question.text }}
+                        </td>
+                        <td class="py-4 pr-3">
+                            <div class="progress" style="height: 3em">
+                                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
+                                    style="width: {{ question.progress.percentage }}%;" aria-valuenow="{{ question.progress.value }}"
+                                    aria-valuemin="0" aria-valuemax="{{ question.progress.max_value }}">
+                                    {{ question.progress.percentage }}%
+                                </div>
+                                <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar"
+                                    style="width: {{ question.progress.reverse_percentage }}%" aria-valuenow="{{ question.progress.reverse_percentage }}"
+                                    aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
-                            <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar"
-                                style="width: {{ question.progress.reverse_percentage }}%" aria-valuenow="{{ question.progress.reverse_percentage }}"
-                                aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </td>
-                </tr>
-                {% with question_stat=questions_answers_stats|dict_key:question.text %}
-                {% for answer_stat in question_stat %}
-                <tr>
+                        </td>
+                    </tr>
+                    {% with question_stat=questions_answers_stats|dict_key:question.text %}
+                    {% for answer_stat in question_stat %}
+                    <tr>
 
-                    <td class="pl-5{% if forloop.first %} pt-4{% endif %}{% if forloop.last %} pb-5{% endif %}">{{ answer_stat.text|safe }}</td>
-                    <td class="{% if forloop.first %} pt-4{% endif %}{% if forloop.last %} pb-5{% endif %}">
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                                style="width: {{ answer_stat.progress.percentage }}%;" aria-valuenow="{{ answer_stat.progress.value }}"
-                                aria-valuemin="0" aria-valuemax="{{ answer_stat.progress.max_value }}">
-                                {{ answer_stat.progress.percentage }}%
+                        <td class="pl-5{% if forloop.first %} pt-4{% endif %}{% if forloop.last %} pb-5{% endif %}">{{ answer_stat.text|safe }}</td>
+                        <td class="{% if forloop.first %} pt-4{% endif %}{% if forloop.last %} pb-5{% endif %}">
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                    style="width: {{ answer_stat.progress.percentage }}%;" aria-valuenow="{{ answer_stat.progress.value }}"
+                                    aria-valuemin="0" aria-valuemax="{{ answer_stat.progress.max_value }}">
+                                    {{ answer_stat.progress.percentage }}%
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-                {% endwith %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endwith %}
 
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="clearfix"></div>
+        <div class="alert alert-secondary" role="alert">
+            Ce quiz n'est pas encore démarré.
+        </div>
+    {% endif %}
 </div>
 {% endblock %}
