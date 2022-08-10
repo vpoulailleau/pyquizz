@@ -94,7 +94,7 @@ SOCIALACCOUNT_PROVIDERS = {
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-# DEBUG = False
+DEBUG = False
 
 if DEBUG:
     INSTALLED_APPS += ["debug_toolbar"]
