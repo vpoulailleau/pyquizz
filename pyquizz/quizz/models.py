@@ -8,7 +8,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
-from django.utils.timezone import get_fixed_timezone
+from django.utils.timezone import get_default_timezone
 
 
 def md2html(text):
@@ -226,7 +226,7 @@ class QuizzSending(models.Model):
         blank=False,
         verbose_name="date de fin du quizz",
         help_text="date de fin du quizz pour un groupe",
-        default=datetime(2100, 1, 1, 0, 0, tzinfo=get_fixed_timezone(1)),
+        default=datetime(2100, 1, 1, 0, 0, tzinfo=get_default_timezone()),
     )
     started = models.BooleanField(
         null=False,
@@ -245,7 +245,7 @@ class QuizzSending(models.Model):
 
     @cached_property
     def date_for_url(self):
-        return self.date.strftime("%Y-%m-%d--%H-%M")
+        return self.date.astimezone(get_default_timezone()).strftime("%Y-%m-%d--%H-%M")
 
     @property
     def nb_persons(self):
