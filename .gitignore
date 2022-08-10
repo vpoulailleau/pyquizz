@@ -4,6 +4,7 @@ init_groups*.py
 init_quiz_*.py
 venv_*/
 pip_freeze_20*
+*.sqlite3
 
 static_collected
 media/
