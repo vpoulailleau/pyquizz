@@ -121,8 +121,8 @@ class UploadZipFileForm(forms.Form):
 
     def clean_file(self):
         data = self.cleaned_data["file"]
-        if data.size > 2 * 1024 * 1024:
-            raise ValidationError("File too large. Size should not exceed 2 MiB.")
+        if data.size > 10 * 1024 * 1024:
+            raise ValidationError("File too large. Size should not exceed 10 MiB.")
         if data.content_type not in ("application/zip", "application/gzip"):
             raise ValidationError("Invalid content type")
         return data
