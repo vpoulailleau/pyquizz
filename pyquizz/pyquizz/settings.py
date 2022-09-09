@@ -117,7 +117,7 @@ if DEBUG:
     INTERNAL_IPS = ["127.0.0.1"]
     # SHOW_TOOLBAR_CALLBACK = True
 else:
-    ALLOWED_HOSTS = ["127.0.0.1", ".vpoulailleau.alwaysdata.net"]
+    ALLOWED_HOSTS = ["127.0.0.1", ".vpoulailleau.alwaysdata.net", ".quiz.lecalamar.fr"]
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
