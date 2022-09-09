@@ -19,7 +19,7 @@ pip freeze > pip_freeze_$(date +%Y-%m-%d--%H-%M-%S)_after.txt
 cd $WORKSPACE/pyquizz/
 pwd
 
-export DJANGO_SETTINGS_MODULE="pyquizz.settings.production"
+export DJANGO_SETTINGS_MODULE="pyquizz.settings"
 
 python -Wd ./manage.py collectstatic --noinput
 python -Wd ./manage.py makemigrations
