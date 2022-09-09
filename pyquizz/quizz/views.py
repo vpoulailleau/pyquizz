@@ -404,7 +404,12 @@ class StudentStatistics(LoginRequiredMixin, TemplateView):
                 nb_points = sum(answer.nb_points for answer in answers)
                 total_points += nb_points
                 max_total_points += 1
-                answers_text = "\n".join(answer.chosen_answers for answer in answers)
+                if datetime.now(tz=get_fixed_timezone(1)) > quizz_sending.end_date:
+                    answers_text = "\n".join(
+                        answer.chosen_answers for answer in answers
+                    )
+                else:
+                    answers_text = ""
                 quizz_sendings_status[quizz_sending].append(
                     Statistics(
                         text=question.statement_html,
