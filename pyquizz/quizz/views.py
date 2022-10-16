@@ -152,6 +152,13 @@ class Statistics:
         self.progress = Progress(value, max_value)
 
 
+def user2name(email):
+    user = User.objects.filter(email=email).first()
+    if user.first_name and user.last_name:
+        return f"{user.last_name.upper()} {user.first_name.title()}"
+    return f"{user.username.upper()} {user.email}"
+
+
 class QuizzStatistics(TemplateView):
     template_name = "quizz/statistics.html"
 
@@ -225,7 +232,7 @@ class QuizzStatistics(TemplateView):
         for email in fetched_persons:
             persons_answered_questions.append(
                 Statistics(
-                    text=email,
+                    text=user2name(email),
                     value=nb_answers_per_student.get(email, 0),
                     max_value=nb_questions,
                 )
@@ -240,7 +247,9 @@ class QuizzStatistics(TemplateView):
             )
             nb_points = sum(answer.nb_points for answer in answers)
             persons_correct_questions.append(
-                Statistics(text=email, value=nb_points, max_value=nb_questions)
+                Statistics(
+                    text=user2name(email), value=nb_points, max_value=nb_questions
+                )
             )
         persons_correct_questions.sort(key=lambda p: p.text)
         kwargs["persons_correct_questions"] = persons_correct_questions
@@ -290,13 +299,6 @@ class QuizzStatistics(TemplateView):
 class QuizzStatisticsCSV(TemplateView):
     template_name = "quizz/statistics.csv"
 
-    @staticmethod
-    def user2name(email):
-        user = User.objects.filter(email=email).first()
-        if user.first_name and user.last_name:
-            return f"{user.last_name.upper()} {user.first_name.title()}"
-        return f"{user.username.upper()} {user.email}"
-
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
         quizz_sending = (
@@ -343,7 +345,7 @@ class QuizzStatisticsCSV(TemplateView):
             nb_points = sum(answer.nb_points for answer in answers)
             persons_correct_questions.append(
                 Statistics(
-                    text=self.user2name(email),
+                    text=user2name(email),
                     value=nb_points,
                     max_value=nb_questions,
                 )
