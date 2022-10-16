@@ -8,7 +8,7 @@ from .models import Answer, Group, Profile, Question, Quizz, QuizzSending, Revie
 
 def user_display(user: User) -> str:
     if user.first_name or user.last_name:
-        return f"{user.last_name} {user.first_name} ({user.username})"
+        return f"{user.last_name.title()} {user.first_name.title()} ({user.username})"
     return f"({user.username})"
 
 
@@ -23,6 +23,7 @@ class ProfileInline(admin.StackedInline):
 
 class UserAdmin(BaseUserAdmin):
     inlines = (ProfileInline,)
+    ordering = ["last_name", "first_name", "username"]
 
 
 admin.site.unregister(User)
