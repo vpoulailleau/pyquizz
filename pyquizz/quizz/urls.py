@@ -57,10 +57,12 @@ def review_list():
         "piscine",
         "arinfo",
     ]
-    for index, review in enumerate(reviews):
+    dated_reviews = []
+    for review in reviews:
         review = review.replace("-", r"\-")
-        reviews[index] = f"(?:{review}\\-{current_year})"
-    return "|".join(reviews)
+        dated_reviews.append(f"(?:{review}\\-{current_year})")
+        dated_reviews.append(f"(?:{review}\\-{current_year - 1})")
+    return "|".join(dated_reviews)
 
 
 class ReviewConverter:
