@@ -237,7 +237,7 @@ class QuizzSending(models.Model):
     )
 
     def get_absolute_url(self):
-        return reverse("quizz_quizzsending_detail", args=[str(self.date)])
+        return reverse("form", args=[self.date_for_url])
 
     @cached_property
     def hash(self):

@@ -435,6 +435,26 @@ class StudentStatistics(LoginRequiredMixin, TemplateView):
 class HelpView(TemplateView):
     template_name = "quizz/help.html"
 
+    def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            groups = self.request.user.pyquizz_groups.all()
+            urls = []
+            for group in groups:
+                latest_quizz_sending = QuizzSending.objects.filter(group=group).latest(
+                    "date"
+                )
+                urls.append(
+                    (
+                        latest_quizz_sending.get_absolute_url(),
+                        latest_quizz_sending.quizz.name,
+                    )
+                )
+            kwargs["quizzes"] = urls
+        else:
+            kwargs["quizzes"] = []
+        return kwargs
+
 
 class QuizzStatisticsList(TemplateView):
     template_name = "quizz/quizz_statistics_list.html"
