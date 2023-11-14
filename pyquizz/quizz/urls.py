@@ -54,6 +54,7 @@ def review_list():
         "B3R",
         "B3I",
         "M1M2",
+        "M1MECAT",
         "piscine",
         "arinfo",
     ]
