@@ -49,6 +49,8 @@ def review_list():
         "B1a",
         "B1b",
         "B1c",
+        "BTS-CIEL-1",
+        "BTS-CIEL-2",
         "BTS-SN-1",
         "BTS-SN-2",
         "B3R",
