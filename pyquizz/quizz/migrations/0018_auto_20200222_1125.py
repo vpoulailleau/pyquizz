@@ -2,7 +2,6 @@
 
 import datetime
 from django.db import migrations, models
-from django.utils.timezone import utc
 
 
 class Migration(migrations.Migration):
@@ -15,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='quizzsending',
             name='end_date',
-            field=models.DateTimeField(default=datetime.datetime(2099, 12, 31, 23, 59, tzinfo=utc), help_text='date de fin du quizz pour un groupe', verbose_name='date de fin du quizz'),
+            field=models.DateTimeField(default=datetime.datetime(2099, 12, 31, 23, 59, tzinfo=datetime.timezone.utc), help_text='date de fin du quizz pour un groupe', verbose_name='date de fin du quizz'),
         ),
     ]

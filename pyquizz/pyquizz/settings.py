@@ -24,6 +24,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # If the site has to be strong
 SECRET_KEY = "%mi(v5@*=bf$7djarac)8%d0&po53t+3tdnepiuqoad4kn0)e#"
 
+
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
 # Application definition
 
 INSTALLED_APPS = [

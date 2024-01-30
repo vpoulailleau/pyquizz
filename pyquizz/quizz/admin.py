@@ -45,15 +45,19 @@ class GroupAdmin(admin.ModelAdmin):
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
+    @admin.display(
+        description="quizz"
+    )
     def quizzes_display(self, obj):
         return format_list(obj.quizzes.all())
 
-    quizzes_display.short_description = "quizz"
 
+    @admin.display(
+        description="réponses"
+    )
     def answers_display(self, obj):
         return format_list(obj.correct_answers_text)
 
-    answers_display.short_description = "réponses"
 
     list_display = ("statement", "quizzes_display", "answers_display")
     prepopulated_fields = {"slug": ("statement",)}
@@ -61,10 +65,12 @@ class QuestionAdmin(admin.ModelAdmin):
 
 @admin.register(Quizz)
 class QuizzAdmin(admin.ModelAdmin):
+    @admin.display(
+        description="questions"
+    )
     def questions_display(self, obj):
         return format_list(obj.questions.all())
 
-    questions_display.short_description = "questions"
 
     list_display = ("name", "random_question_order", "questions_display")
     prepopulated_fields = {"slug": ("name",)}
@@ -78,11 +84,16 @@ class QuizzSendingAdmin(admin.ModelAdmin):
 
 @admin.register(Answer)
 class AnswerAdmin(admin.ModelAdmin):
+    @admin.display(
+        description="quizz"
+    )
     def quizz_sending_quizz(self, obj):
         return str(obj.quizz_sending.quizz)
 
-    quizz_sending_quizz.short_description = "quizz"
 
+    @admin.display(
+        description="réponses"
+    )
     def answers_display(self, obj):
         possible_answers = obj.question.possible_answers
         chosen_answers = obj.chosen_answers
@@ -94,7 +105,6 @@ class AnswerAdmin(admin.ModelAdmin):
                 answers.append("Réponse invalide")
         return format_list(answers)
 
-    answers_display.short_description = "réponses"
 
     list_display = (
         "quizz_sending_quizz",
