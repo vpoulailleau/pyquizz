@@ -1,4 +1,4 @@
-VENV_NAME="venv_prod_3.8.3"
+VENV_NAME="venv_prod_3.11.7"
 WORKSPACE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 deactivate
