@@ -1,5 +1,6 @@
 django
 django-allauth
+python-dotenv
 qrcode[pil]
 
 # dev only, normally in an other requirements file

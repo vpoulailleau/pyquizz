@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 
 from django.contrib.messages import constants as messages
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -112,7 +115,7 @@ SOCIALACCOUNT_PROVIDERS = {
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-DEBUG = False
+# DEBUG = False
 
 if DEBUG:
     INSTALLED_APPS += ["debug_toolbar"]
@@ -223,3 +226,15 @@ MESSAGE_TAGS = {
     messages.WARNING: "alert alert-warning",
     messages.ERROR: "alert alert-danger",
 }
+
+ADMINS = [
+    ("Vincent", "vpoulailleau@gmail.com"),
+]
+EMAIL_SUBJECT_PREFIX = "[Quiz] "
+SERVER_EMAIL = os.getenv("SERVER_EMAIL", "")
+EMAIL_HOST = os.getenv("EMAIL_HOST", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
