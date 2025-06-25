@@ -55,8 +55,13 @@ def review_list():
         "BTS-SN-2",
         "B3R",
         "B3I",
+        "M1",
+        "M2",
         "M1M2",
         "M1MECAT",
+        "M1INFO",
+        "M2MECAT",
+        "M2INFO",
         "piscine",
         "arinfo",
     ]
