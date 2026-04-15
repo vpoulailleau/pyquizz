@@ -100,6 +100,10 @@ class Question(models.Model):
         return reverse("quizz_question_detail", args=[str(self.slug)])
 
     @cached_property
+    def nb_good_answers(self) -> int:
+        return len(self.correct_answers.split(","))
+
+    @cached_property
     def statement_html(self):
         return md2html(self.statement)
 
