@@ -111,7 +111,7 @@ class Question(models.Model):
     def possible_answers(self):
         answers = [answer.strip() for answer in str(self.answers).split("----")]
         if not self.auto_evaluation:
-            answers.append("Sans opinion")
+            answers.append("Je sais que je ne sais pas, et j'ai le courage de l'avouer")
         return answers
 
     @cached_property
